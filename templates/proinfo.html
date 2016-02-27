@@ -1,0 +1,212 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load static %}
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+    <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
+    <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/test_today.css'%}"/>
+  <!--   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" /> -->
+    <!-- Load jQuery JS -->
+    <!-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    Load jQuery UI Main JS 
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
+    <script type="text/javascript">
+      $(document).ready(
+        /* This is the function that will get executed after the DOM is fully loaded */
+        function () 
+        {
+          $( "#datepicker" ).datepicker({
+              changeMonth: true,//this option for allowing user to select month
+              changeYear: true //this option for allowing user to select from year range
+              // dateFormat: 'yy-mm-dd'
+          });
+        }
+      );
+    </script>
+  </head>
+  <body>
+    <div id="wrapper">
+	   <div id="header-wrapper">
+		    <div id="menu" class="container" style="background:#121079;">
+            <ul>
+            {% if role == "Admin" %}
+            <li>
+            <a href="/projects/" accesskey="4" title="">المشاريع</a>
+          </li>
+                <li class="current_page_item"><a  href="/accounts/" accesskey="1" title="">الحسابات</a></li>
+                <li><a href="/shekat/" accesskey="4" title="">الرصيد</a></li>
+                <li><a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a></li>
+                <li ><a href="/today/" accesskey="3" title="">اليومية</a></li>
+                <li ><a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a></li>
+                {% else %}
+                <li>
+            <a href="/projects/" accesskey="4" title="">المشاريع</a>
+          </li>
+                <li><a href="/shekat/" accesskey="4" title="">الرصيد</a></li>
+                <li><a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a></li>
+                <li ><a href="/today/" accesskey="3" title="">اليومية</a></li>
+                <li class="current_page_item"><a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a></li>
+                {% endif %}
+            </ul>
+		      </div>
+	     </div>
+	     <div id="page" class="container">
+        	{% if username%}
+          
+        	
+          <br>
+          
+          <center>
+             <table>
+          
+                <caption><h1>العناصر</h1></caption>
+           
+                <tr>
+                    <th>الظبط</th>
+                    <th>ملاحظات</th>
+                    <th>التاريخ</th>
+                    <th>السعر الكلى</th>
+                    <th>الكمية</th>
+                    <th>سعر الوحدة</th>
+                    <th>الاسم</th>
+                    <th>اسم المشروع</th>
+                </tr>
+               {% for item in items %}
+                <tr>
+                    <td style="width:15%">
+                      <a  href="/edititem/{{item.id}}" style="color:blue;float:right;padding:10px;font-size:18px;">تعديل</a> 
+                      <a  href="/delitem/{{item.id}}/" style="font-size:18px;color:red;float:right;padding:10px;">حذف</a>
+                    </td>
+                    <td style="direction: rtl; text-align: right;">{{item.item_description}}
+                    </td>
+                    <td style="direction: rtl; text-align: right;">{{item.item_date}}
+                    </td>
+                    <td style="direction: rtl; text-align: right;">{{item.item_total}}
+                    </td>
+                    <td style="direction: rtl; text-align: right;">{{item.item_amount}}
+                    </td>
+                    <td style="direction: rtl; text-align: right;">{{item.item_price}}
+                    </td>
+                    <td style="direction: rtl; text-align: right;">{{item.item_title}}
+                    </td>
+                    <td style="direction: rtl; text-align: right;">{{item.project}}
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+              </table>
+              <h1>
+              <center>
+                <a href="/additem/" style="color:blue;margin-right:155px;">اضافة عنصر جديد</a>
+                </center>
+              </h1>
+            </center>
+            <br>
+
+          <center>
+             <table>
+          
+                <caption><h1>المقاولين</h1></caption>
+            <tr>
+              <th>الضبط</th>
+              <th>المبلغ المدفوع</th>
+              <th>المبلغ المتفق عليه</th>
+              <th>المهنة</th>
+              <th>اسم المقاول</th>
+              <th>اسم المشروع</th>
+            </tr>
+            {% for person in m2awelen %}
+            <tr>
+              <td style="width:20%"> 
+                <a  href="/viewm2awel/{{person.id}}/" style="font-size:18px;color:green;float:right;padding:10px;">عرض
+                </a>
+                <a  href="/editm2awel/{{person.id}}" style="color:blue;float:right;padding:10px;font-size:18px;">تعديل
+                </a>
+                <a  href="/delm2awel/{{person.id}}/" style="font-size:18px;color:red;float:right;padding:10px;">حذف
+                </a> 
+              </td>
+              <td style="direction: rtl; text-align: right;">{{person.paid}}</td>
+              <td style="direction: rtl; text-align: right;">{{person.money}}</td>
+              <td style="direction: rtl; text-align: right;">{{person.job}}</td>
+              <td style="direction: rtl; text-align: right;">{{person.name}}</td>
+              <td style="direction: rtl; text-align: right;">{{person.project}}</td>
+              
+            </tr>
+            {% endfor %}
+          </table>
+
+              <h1>
+              <center>
+                 <a href="/addm2awel/" style="color:blue;margin-right:155px;">اضافة مقاول جديد</a>
+                 </center>
+              </h1>
+            </center>
+            <br>
+           <center>
+             <table>
+          
+                <caption><h1>الشيكات</h1></caption>
+             <tr>
+        {% if role == "Admin" %}
+          <th>الظبط</th>
+          <th>القيمة</th>
+          <th>تاريخ الشيك</th>
+          <th>رقم الشيك</th>
+          <th>اسم المشروع</th>
+        {% else %}   
+          <th>القيمة</th>
+          <th>تاريخ الشيك</th>
+          <th>رقم الشيك</th>
+          <th>اسم المشروع</th>
+        {% endif %}
+        </tr>
+        {% if role == "Admin" %}
+         {% for item in shekat %}
+          <tr>
+            <td style="width:15%">
+              <a  href="/editshek/{{item.id}}" style="color:blue;float:right;padding:10px;font-size:18px;">تعديل</a> 
+              <a  href="/delshek/{{item.id}}/" style="font-size:18px;color:red;float:right;padding:10px;">حذف</a> 
+            </td>
+            <td style="direction: rtl; text-align: right;">{{item.amount}}</td>
+            <td style="direction: rtl; text-align: right;">{{item.date}}</td>
+            <td style="direction: rtl; text-align: right;">{{item.num}}</td>
+            <td style="direction: rtl; text-align: right;">{{item.project}}</td>
+            
+          </tr>
+          {% endfor %}
+        {% else %}
+        {% for item in shekat %}
+          <tr>
+            <td style="direction: rtl; text-align: right;">{{item.amount}}</td>
+            <td style="direction: rtl; text-align: right;">{{item.date}}</td>
+            <td style="direction: rtl; text-align: right;">{{item.num}}</td>
+            <td style="direction: rtl; text-align: right;">{{item.project}}</td>
+          </tr>
+
+        {% endfor %}
+        {% endif %}
+      </table> 
+       <h1>
+       <center>
+      <a href="/addshek/" style="color:blue;margin-right:155px;">اضافة شيك جديد</a>
+      </center>
+              </h1>
+            </center>
+             
+		        {% else %}
+            <center>
+                <p style="color:red; font-size:22px;">لابد من تسجيل دخول حتى ترى هذة الصفحة</p>
+     		         <div style="margin: 15px;">
+		                <a style="color:blue; font-size:20px" href="/login/">تسجيل دخول</a>
+		                <a style="color:green;margin-right:30px;font-size:20px" href="/register/">انشاء حساب </a>
+                  </div>
+            </center>
+		        {% endif %}
+	       </div>
+      </div>
+     
+    </body>
+</html>

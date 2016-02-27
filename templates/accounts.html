@@ -1,0 +1,210 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load static %}
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+	<link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
+	<link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/test_today.css'%}"/>
+<!--     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+     
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <!-- Load jQuery UI Main JS  -->
+    <!-- <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> --> -->
+  
+    <script type="text/javascript">
+        $(document).ready(
+            /* This is the function that will get executed after the DOM is fully loaded */
+          function () 
+          {
+              $( "#datepicker1" ).datepicker({
+              changeMonth: true,//this option for allowing user to select month
+              changeYear: true //this option for allowing user to select from year range
+          });
+          }
+
+          );
+        $(document).ready(
+            /* This is the function that will get executed after the DOM is fully loaded */
+          function () 
+          {
+              $( "#datepicker2" ).datepicker({
+              changeMonth: true,//this option for allowing user to select month
+              changeYear: true //this option for allowing user to select from year range
+          });
+          }
+
+          );
+      </script>
+	
+</head>
+<body>
+	<div id="wrapper">
+		<div id="header-wrapper">
+			<div id="menu" class="container" style="background:#121079;">
+				<ul>
+        <li>
+            <a href="/projects/" accesskey="4" title="">المشاريع</a>
+          </li>
+					<li class="current_page_item">
+						<a href="/accounts/" accesskey="1" title="">الحسابات</a>
+					</li>
+					<li>
+						<a href="/shekat/" accesskey="4" title="">الرصيد</a>
+					</li>
+					<li >
+						<a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+					</li>
+					<li >
+						<a href="/today/" accesskey="3" title="">اليومية</a>
+					</li>
+					<li >
+						<a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+					</li>
+			</ul>
+		</div>
+	</div>
+	<div id="page" class="container">
+		{% if username %}
+        <div>
+           <!--  <form class="search" method="post" action="/accountsbydate/" style="float:right;" name="test">
+     	      {% csrf_token %}
+     		     <a href="javascript:document.forms['test'].submit()" style="color:red;float: right;">بحث</a>
+     		     <br>
+              	<input type="text" id="datepicker1" name="datepicker1" style="direction: rtl; text-align: right;" placeholder="من تاريخ"/>
+          		<input type="text" id="datepicker2" name="datepicker2" style="direction: rtl; text-align: right;" placeholder="من تاريخ"/>
+       	    </form> -->
+
+
+
+             <form class="search" method="POST" action="/getproinfo/" style="float:right;" name="test">
+      {% csrf_token %}
+          <a href="javascript:document.forms['test'].submit()" style="color:red;float: right;">بحث</a>
+          <br>
+          <div class="form-row"  style="direction: rtl; text-align: right;">
+            <label style="direction: rtl; text-align: right;padding:-10px 60px ;"  >المشروع</label>
+            <br>
+            <select name="jobs" id="jobs" style="direction: rtl; text-align: right;">
+              <option value="defult" selected="">اختر المشروع من هنا</option>
+              {% for project in all_projects %}
+              <option value="{{project.name}}">{{project.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+         
+          <br>
+        </form>
+
+
+        </div>
+          
+        <br>
+         <form style="margin-top: 50px;float: right; margin-right:-190px;">
+         <br>
+            <div class="form-row"  style="direction: rtl; text-align: right;">
+                <label style="direction: rtl; text-align: right;padding:-10px 60px ;"  >المدفوع اليومى</label>
+                <input type="text" disabled style="direction: rtl; text-align: right;" value="{{all_price}}" />
+            </div>
+          </form>
+  <!--  <a href="/report/" style="margin-top: 50px;color:blue;float: right; margin-right:-190px; ">طباعة المصروف اليومى</a> -->
+  {% if project %}
+        {% if items %}
+		<div id="customers">
+        <!-- <div>{{items}}</div> -->
+            <table>
+                    <caption><h1>العناصر</h1></caption>
+                    <tr>
+                        <th>الظبط</th>
+                        <th>ملاحظات</th>
+                        <th>التاريخ</th>
+                        <th>السعر الكلى</th>
+                        <th>الكمية</th>
+                        <th>سعر الوحدة</th>
+                        <th>الاسم</th>
+                    </tr>
+                   {% for item in items %}
+                    <tr>
+                        <td style="width:15%">
+                          <a  href="/edititem/{{item.id}}" style="color:blue;float:right;padding:10px;font-size:18px;">تعديل</a> 
+                          <a  href="/delitem/{{item.id}}/" style="font-size:18px;color:red;float:right;padding:10px;">حذف</a>
+                        </td>
+                        <td style="direction: rtl; text-align: right;">{{item.item_description}}
+                        </td>
+                        <td style="direction: rtl; text-align: right;">{{item.item_date}}
+                        </td>
+                        <td style="direction: rtl; text-align: right;">{{item.item_total}}
+                        </td>
+                        <td style="direction: rtl; text-align: right;">{{item.item_amount}}
+                        </td>
+                        <td style="direction: rtl; text-align: right;">{{item.item_price}}
+                        </td>
+                        <td style="direction: rtl; text-align: right;">{{item.item_title}}
+                        </td>
+                    </tr>
+                    {% endfor %}
+            </table>
+            {% endif %}
+            {% if actions %}
+            <div>{{actions}}</div>
+              <table>
+              <caption><h1>المقاولين</h1></caption>
+                <tr>
+                    <th>الضبط</th>
+                    <th>التاريخ</th>  
+                    <th>المبلغ المدفوع</th>
+                    <th>المهنة</th>
+                    <th>اسم المقاول</th>
+                </tr>
+               {% for action in actions %} 
+                <tr>
+                  <td style="width:20%"> 
+                      <center>
+                        <a  href="/editaction/{{obj.id}}" style="color:blue;float:right;padding:10px;font-size:18px;">تعديل</a> 
+                      </center>
+                  </td>
+                  <td style="direction: rtl; text-align: right;">{{action.action_date}}
+                  </td>
+                  <td style="direction: rtl; text-align: right;">{{action.action_paid}}
+                  </td>
+                  <td style="direction: rtl; text-align: right;">{{action.m2awel.job}}
+                  </td>
+                  <td style="direction: rtl; text-align: right;">{{action.m2awel.name}}
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+    
+        {% endif %}
+        {% if actions and items %}
+        <div></div>
+        {% else %}
+        <center>
+            <div> 
+                <p style="color:red; font-size:22px;">قم باختيار المشروع لمعرفة العناصر والمقاولين والشيكات لهذا المشروع</p> 
+            </div>
+        </center>
+        {% endif %}
+        {% else %}
+        <center>
+        <p style="color:red; font-size:22px;">لابد من اختيار المشروع </p>
+        </center>
+        {% endif %}
+        <br>
+		{% else %}
+ 			<center>
+	            <p style="color:red; font-size:22px;">لابد من تسجيل دخول حتى ترى هذة الصفحة</p>
+    	 			<div style="margin: 15px;">
+		        		<a style="color:blue; font-size:20px" href="/login/">تسجيل دخول</a>
+		        		<a style="color:green;margin-right:30px;font-size:20px" href="/register/">انشاء حساب </a>
+            		</div>
+			</center>
+		{% endif %}
+	</div>
+</div>
+
+</body>
+</html>

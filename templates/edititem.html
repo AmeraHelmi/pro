@@ -1,0 +1,127 @@
+<!DOCTYPE>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load static %}
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+        <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
+        <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
+        <link href="{% static 'css/test.css' %}" rel="stylesheet" type="text/css" media="all" />
+        <script type="text/javascript" src="{% static 'js/editaction.js'%}"></script>
+    </head>
+    <body>
+        <div id="wrapper">
+	       <div id="header-wrapper">
+		      <div id="menu" class="container" style="background:#121079;">
+		          <ul>
+                    {% if role = "Admin" %}
+                    <li>
+            <a href="/projects/" accesskey="4" title="">المشاريع</a>
+          </li>
+                    <li >
+                        <a  href="/accounts/" accesskey="1" title="">الحسابات</a>
+                    </li>
+                    <li>
+                        <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+                    </li>
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li >
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
+                    {% else %}
+                    <li>
+            <a href="/projects/" accesskey="4" title="">المشاريع</a>
+          </li>
+                    <li>
+                        <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+                    </li>
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+	   <div id="page" class="container">
+        <div style="margin:40px;">
+            <form action="/edititem/{{obj.id}}" method="post" id="signupForm">
+            {% csrf_token %}
+                <center>
+                    <caption><h1>{{today_date}}</h1></caption>
+                    <div class="fieldContainer">
+                        <div class="formRow">
+                            <div class="label">
+                                <label for="name">الاسم</label>
+                            </div>
+                            <div class="field">
+                                <input type="text" name="title" id="name"  placeholder=" {{obj.item_title}}"/>
+                            </div>
+                        </div>
+                        <div class="formRow">
+                            <div class="label">
+                                <label for="price">سعر الوحدة</label>
+                            </div>
+                            <div class="field">
+                                <input type="text" name="price" id="price" onKeyPress="return numbersonly(this, event)" placeholder=" {{obj.item_price}}"/>
+                            </div>
+                        </div>
+                        <div class="formRow">
+                            <div class="label">
+                                <label for="amount">الكمية</label>
+                            </div>
+                            <div class="field">
+                                <input type="text" name="amount" id="amount" onKeyPress="return numbersonly(this, event)" placeholder="{{obj.item_amount}}"/>
+                            </div>
+                        </div>
+                        <div class="formRow">
+                            <div class="label">
+                                <label for="total">السعر الكلى</label>
+                            </div>
+                            <div class="field">
+                                <input type="text" name="total" id="total" placeholder="{{obj.item_total}}" />
+                            </div>
+                        </div>
+                        <div class="formRow">
+                            <div class="label">
+                                <label for="date">التاريخ</label>
+                            </div>
+                            <div class="field">
+                                <input type="date" name="date" id="date"  placeholder=" {{obj.item_date}}"/>
+                            </div>
+                        </div>
+                        <div class="formRow">
+                            <div class="label">
+                                <label for="notes">ملاحظات</label>
+                            </div>
+                            <div class="field">
+                                <textarea name="notes" id="notes" style="width:370px;height:80px;" placeholder=" {{obj.item_description}}">
+                                </textarea>
+                            </div>
+                        </div>
+                    </div> <!-- Closing fieldContainer -->
+                </center>
+                <br>
+                <br>
+                <br>
+                <center>
+                    <input type="submit" name="submit" style="width:150px;height:50px" value=" تعديل" />
+                </center>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load static %}
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+    <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
+    <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
+    <link href="{% static 'css/test.css' %}" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="{% static 'js/additem.js' %}"></script>
+</head>
+<body>
+<div id="wrapper">
+	<div id="header-wrapper">
+		<div id="menu" class="container" style="background:#121079;">
+	   <ul>
+      {% if role = "Admin" %}
+      <li>
+            <a href="/projects/" accesskey="4" title="">المشاريع</a>
+          </li>
+        <li >
+          <a  href="/accounts/" accesskey="1" title="">الحسابات</a>
+        </li>
+        <li>
+          <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+        </li>
+        <li>
+          <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+        </li>
+        <li class="current_page_item">
+          <a href="/today/" accesskey="3" title="">اليومية</a>
+        </li>
+        <li >
+          <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+        </li>
+      {% else %}
+      <li>
+            <a href="/projects/" accesskey="4" title="">المشاريع</a>
+          </li>
+        <li>
+          <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+        </li>
+        <li>
+          <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+        </li>
+        <li>
+          <a href="/today/" accesskey="3" title="">اليومية</a>
+        </li>
+        <li class="current_page_item">
+          <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+        </li>
+      {% endif %}
+    </ul>
+	</div>
+</div>
+<div id="page" class="container">
+  <div style="margin:40px;">
+    <form action="/addpro/" method="post" id="signupForm">
+    {% csrf_token %}
+      <center>
+        <caption><h1>{{today_date}}</h1></caption>
+        <div class="fieldContainer">
+          <div class="formRow">
+            <div class="label">
+              <label for="name">اسم المشروع</label>
+            </div>
+            <div class="field">
+              <input type="text" name="name" id="name" required placeholder=" ادخل اسم المشروع هنا"style="direction: rtl; text-align: right;" required/>
+            </div>
+        </div>
+       <!--  <div class="formRow">
+          <div class="label">
+            <label for="price">سعر الوحدة</label>
+          </div>
+          <div class="field">
+            <input type="text" name="price" id="price" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;" placeholder=" ادخل سعر الوحدة هنا"/>
+          </div>
+        </div>
+        <div class="formRow">
+          <div class="label">
+            <label for="amount">الكمية</label>
+          </div>
+          <div class="field">
+            <input type="text" name="amount" id="amount" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;"onblur='Calculate();' placeholder=" ادخل الكمية هنا"/>
+          </div>
+        </div>
+        <div class="formRow">
+          <div class="label">
+            <label for="total">اجمالى الحساب </label>
+          </div>
+          <div class="field">
+            <input type="text" name="total"  id="total" placeholder="هنا يكون السعر الكلى" style="width:150px;direction: rtl; text-align: right; background-color : #d1d1d1;" onKeyPress="return numbersonly(this, event)" disabled/>
+            <a style=" margin-right: 20px;color:red;" onclick="test()" href="#">ادخال اجمالى الحساب</a>
+          </div>
+        </div>
+         <div class="formRow">
+          <div class="label">
+            <label for="project">المشروع </label>
+          </div>
+          <div class="field">
+           <a style=" margin-right: 20px;color:red;" href="/addpro/">اضافة مشروع جديد</a>
+           <select name="projects" id="projects" style="direction: rtl; text-align: right;">
+              <option value="defult" selected="">اختر المشروع من هنا</option>
+              {% for project in projects %}
+              <option value="{{project.name}}">{{project.name}}</option>
+              {% endfor %}
+            </select>
+
+            
+          </div>
+        </div>
+        <div class="formRow">
+          <div class="label">
+            <label for="notes">ملاحظات</label>
+          </div>
+          <div class="field">
+            <textarea name="notes" id="notes" style="width:370px;height:80px;direction: rtl; text-align: right;" placeholder=" ادخل ملاحظاتك هنا" ></textarea>
+          </div>
+        </div> -->
+    </div> <!-- Closing fieldContainer -->
+  </center>
+  <br>
+  <br>
+  <br>
+  <center>
+    <input type="submit" name="submit" style="width:150px;height:50px" value=" اضافة جديد" />
+  </center>
+</form>
+</div>
+</div>
+</div>
+
+</body>
+</html>

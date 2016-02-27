@@ -1,0 +1,63 @@
+
+
+.fieldContainer{
+	/* The light rounded section, which contans the fields */
+	background-color:#697FEA;
+	border:1px solid #0E0E0E;
+	padding:30px 10px;
+	width: 50%;
+
+	/* CSS3 box shadow, used as an inner glow */
+	-moz-box-shadow:0 0 20px #697FEA inset;
+	-webkit-box-shadow:0 0 20px #697FEA inset;
+	box-shadow:0 0 20px #697FEA inset;
+}
+
+
+.formRow{
+	height:50px;
+	padding:10px;
+	position:relative;
+}
+
+.label{
+	float:right;
+	padding:0 20px 0 0;
+	text-align:right;
+	width:100px;
+}
+
+label{
+	font-family:Century Gothic,Myriad Pro,Arial,Helvetica,sans-serif;
+	font-size:px;12px;
+	letter-spacing:1px;
+	line-height:35px;
+
+}
+
+.field{
+	float:right;
+}
+
+.field input{
+	/* The text boxes */
+	border:1px solid white;
+	color:#666666;
+	font-family:Arial,Helvetica,sans-serif;
+	font-size:15px;
+	float:right;
+	padding:4px 5px;
+	width:200%;
+
+	outline:none; /* Preventing the default Safari and Chrome text box highlight */
+}
+
+input:hover,
+input:focus{
+	-moz-box-shadow:0 0 8px lightblue;
+	-webkit-box-shadow:0 0 8px lightblue;
+	box-shadow:0 0 8px lightblue;
+}
+
+
+
