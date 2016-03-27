@@ -18,7 +18,8 @@ from django.contrib import admin
 from myapp.views import *
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^test/$',test),
+    url(r'^itemsearch/$',itemsearch),
+    url(r'^sheksearch/$',sheksearch),
     url(r'^delipro/(?P<pid>\d+)',delipro),
     url(r'^usepro/(?P<pid>\d+)',usepro),
     url(r'^editpro/(?P<pid>\d+)',editpro),
@@ -48,7 +49,7 @@ urlpatterns = [
     url(r'^editshek/(?P<uid>\d+)',editshek),
     url(r'^editm2awel/(?P<uid>\d+)',editm2awel),
     url(r'^edititem/(?P<uid>\w+)',search),
-    url(r'^editaction/(?P<uid>\d+)',editaction),
+    url(r'^editaction/(?P<uid>\d+)/(?P<aid>\d+)',editaction),
     url(r'^report/$',report),
     url(r'^addpro/$',addpro),
     url(r'^addj/$',addproj),

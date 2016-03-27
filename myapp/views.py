@@ -1,4 +1,6 @@
+# encoding=utf-8
 import os, sys
+from reportlab.pdfgen import canvas
 from django.shortcuts import render
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
@@ -13,6 +15,8 @@ from django.template.loader import get_template
 from django.template import Context
 import cStringIO as StringIO
 from cgi import escape
+from StringIO import StringIO
+
 ####################################################################
 # start method for system
 def start(request):
@@ -29,6 +33,7 @@ def start(request):
 #####################################################################
 # to print pdf 
 def pdf_printer(request):
+    pdfkit.from_file('today.html', 'out.pdf') 
     # print pdf  
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
@@ -37,7 +42,7 @@ def pdf_printer(request):
     p = canvas.Canvas(response)
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
-    p.drawString(100, 100, request.session.get("username"))
+    p.drawString(100, 100, "asd")
     # Close the PDF object cleanly, and we're done.
     p.showPage()
     p.save()
@@ -46,6 +51,7 @@ def pdf_printer(request):
 # search by date in "elyomia page"
 def search(request):
     if request.method == 'POST':
+        today_date=date.today()
         item_date=request.POST.get("datepicker")
         if item_date:
             month,day,year = item_date.split('/')
@@ -59,6 +65,7 @@ def search(request):
             testdate=datetime.datetime(year,month,day)
             ss_items=Item.objects.all().values_list('item_title',flat=True)
             items=Item.objects.filter(item_date=testdate)
+            today_items=Item.objects.filter(item_date=today_date)
             email=request.session.get("email")
             user_obj=User.objects.get(user_email=email)
             request.session['username']=user_obj.user_name
@@ -78,9 +85,11 @@ def search(request):
             else:
                 return render(request,'today.html',{'username':username,'role':role})
         else:
+            
             today_date=date.today()
             ss_items=Item.objects.all().values_list('item_title',flat=True)
             items=Item.objects.filter(item_date=today_date)
+            today_items=Item.objects.filter(item_date=today_date)
             email=request.session.get("email")
             user_obj=User.objects.get(user_email=email)
             request.session['username']=user_obj.user_name
@@ -92,13 +101,12 @@ def search(request):
                 pro_obj=Project.objects.get(name=project)            
                 items=Item.objects.filter(item_date=today_date,project=pro_obj)
                 all_price=0
-                for item in items:
+                for item in today_items:
                     ss=int(item.item_total.encode('utf-8'))
                     all_price=all_price+ss
                 return render(request,'today.html',{'project':project,'username':username,'role':role,'items':items,'today_date':today_date,'all_items':ss_items,'all_price':all_price})
             else:
                 return render(request,'today.html',{'username':username,'role':role,'today_date':today_date})
-
 #####################################################################
 def projects(request):
     if request.session.get("email"):
@@ -116,6 +124,7 @@ def projects(request):
 # index method for "elyomia page"
 def today(request):
     today_date=date.today()
+    aa_items=Item.objects.all()
     ss_items=Item.objects.all().values_list('item_title',flat=True)
     items=Item.objects.filter(item_date=today_date)
     if request.session.get("email"):
@@ -134,7 +143,7 @@ def today(request):
             request.session['role']=user_obj.user_role
             role=request.session.get("role")
             project=request.session.get("project")
-            return render(request,'today.html',{'project':project,'username':username,'role':role,'items':items,'today_date':today_date,'all_items':ss_items,'all_price':all_price})
+            return render(request,'today.html',{'aa_items':aa_items,'project':project,'username':username,'role':role,'items':items,'today_date':today_date,'all_items':ss_items,'all_price':all_price})
         else:
             email=request.session.get("email")
             user_obj=User.objects.get(user_email=email)
@@ -143,7 +152,7 @@ def today(request):
             request.session['role']=user_obj.user_role
             role=request.session.get("role")
             
-            return render(request,'today.html',{'username':username,'role':role,'today_date':today_date})
+            return render(request,'today.html',{'aa_items':aa_items,'username':username,'role':role,'today_date':today_date})
     else:
 
         return render(request,'today.html')
@@ -162,6 +171,12 @@ def test(request):
 # index method for ma2wlen page
 def m2alen(request):
     if request.session.get("email"):
+        email=request.session.get("email")
+        user_obj=User.objects.get(user_email=email)
+        request.session['username']=user_obj.user_name
+        username=request.session.get("username")
+        request.session['role']=user_obj.user_role
+        role=request.session.get("role")
         if request.session.get("project"):
             project=request.session.get("project")
             pro_obj=Project.objects.get(name=project)
@@ -173,33 +188,54 @@ def m2alen(request):
                         m_obj=M2awel.objects.get(id=obj['m2awel'])
                         m_obj.paid=obj['data_sum']
                         m_obj.save()
-        # persons=M2awel.objects.all()
             users=M2awel.objects.all()
-            email=request.session.get("email")
-            user_obj=User.objects.get(user_email=email)
-            request.session['username']=user_obj.user_name
-            username=request.session.get("username")
-            request.session['role']=user_obj.user_role
-            role=request.session.get("role")
-        # project=request.session.get("project")
             today_date=date.today()
             return render(request,'m2alen.html',{'today_date':today_date,'project':project,'username':username,'role':role,'persons':persons,'objs':objs,'users':users}) 
         else:
-            return render(request,'m2alen.html')
+            return render(request,'m2alen.html',{'username':username,'role':role})
     else:
       
         return render(request,'m2alen.html')
 #######################################################################
 def getproinfo(request):
+    username=request.session.get("username")
+    role=request.session.get("role")
+    project=request.session.get("project")
     if request.method == 'POST':
-        job = request.POST.get('jobs', None)  
-        pro_obj=Project.objects.get(name=job)
-        username=request.session.get("username")
-        role=request.session.get("role")
-        items=Item.objects.filter(project=pro_obj)
-        m2awelen=M2awel.objects.filter(project=pro_obj)
-        shekat=Shek.objects.filter(project=pro_obj)
-        return render(request,'proinfo.html',{'username':username,'role':role,'items':items,'m2awelen':m2awelen,'shekat':shekat})
+        project = request.POST.get('projects', None)  
+        if project != 'defult':
+            pro_obj=Project.objects.get(name=project)
+            items=Item.objects.filter(project=pro_obj)
+            m2awelen=M2awel.objects.filter(project=pro_obj)
+            shekat=Shek.objects.filter(project=pro_obj)
+            items_price=0
+            ma2wlen_price=0
+            shekat_price=0
+            for item in items:
+                ss=int(item.item_total.encode('utf-8'))
+                items_price=items_price+ss
+            for m2awel in m2awelen:
+                mm=int(m2awel.paid)
+                ma2wlen_price=ma2wlen_price+mm
+            for shek in shekat:
+                hh=int(shek.amount)
+                shekat_price=shekat_price+hh
+            return render(request,'proinfo.html',{'project':project,'username':username,'role':role,'items':items,'m2awelen':m2awelen,'shekat':shekat,'items_price':items_price,'ma2wlen_price':ma2wlen_price,'shekat_price':shekat_price})
+        else:
+            today_date=date.today()
+            project=request.session.get("project")
+            projects=Project.objects.all()
+            pro_obj=Project.objects.get(name=project)
+            dd_items=Item.objects.filter(item_date=today_date,project=pro_obj)
+            all_price=0
+            for item in dd_items:
+                ss=int(item.item_total.encode('utf-8'))
+                all_price=all_price+ss
+            dd_actions=Transaction.objects.filter(action_date=today_date)
+            for action in dd_actions:
+                dd=int(action.action_paid)
+                all_price=all_price+dd
+            return render(request,'accounts.html',{'all_projects':projects,'project':project,'all_price':all_price,'username':username,'role':role})           
 #######################################################################
 # to make report 
 def accountsbydate(request):
@@ -373,22 +409,23 @@ def m2awelsearch(request):
 #######################################################################
 # index method for "shekat page"
 def shekat(request):
+    email=request.session.get("email")
+    aa_items=Shek.objects.all()
+    user_obj=User.objects.get(user_email=email)
+    request.session['username']=user_obj.user_name
+    username=request.session.get("username")
+    request.session['role']=user_obj.user_role
+    role=request.session.get("role")
     if request.session.get("email"):
-        email=request.session.get("email")
-        user_obj=User.objects.get(user_email=email)
-        request.session['username']=user_obj.user_name
-        username=request.session.get("username")
-        request.session['role']=user_obj.user_role
-        role=request.session.get("role")
         today_date=date.today()
         if request.session.get("project"):
             today_date=date.today()
             project=request.session.get("project")
             pro_obj=Project.objects.get(name=project)
             items=Shek.objects.filter(project=pro_obj,date=today_date)
-            return render(request,'shekat.html',{'project':project,'items':items,'role':role,'username':username,'today_date':today_date})
+            return render(request,'shekat.html',{'project':project,'aa_items':aa_items,'items':items,'role':role,'username':username,'today_date':today_date})
         else:
-            return render(request,'shekat.html')
+            return render(request,'shekat.html',{'username':username,'role':role})
     else:
        
         # items=Shek.objects.filter(project=pro_obj,date=today_date)
@@ -431,8 +468,7 @@ def accounts(request):
 def register(request):
     # registeration form
     if request.method == 'POST':
-        # get information of user
-        
+        # get information of user        
         u_name=request.POST.get("name")
         u_email=request.POST.get("email")
         u_pass=request.POST.get("pass")
@@ -489,17 +525,26 @@ def logout(request):
 ###################################################################################
 # to add new item in Item table
 def additem(request):
+    i_price=0
+    i_amount=0
+    i_total=0
+    today_date=date.today()
+    email=request.session.get("email")
+    user_obj=User.objects.get(user_email=email)
+    request.session['username']=user_obj.user_name
+    username=request.session.get("username")
+    request.session['role']=user_obj.user_role
+    role=request.session.get("role")
+    projects=Project.objects.all()
     if request.method == 'POST':
         # get information of item
-        i_title=request.POST.get("title")
+        if request.POST.get("title"):
+            i_title=request.POST.get("title")
+
         if request.POST.get("price"):
             i_price=request.POST.get("price")
-        else:
-            i_price=""
         if request.POST.get("amount"):
             i_amount=request.POST.get("amount")
-        else:
-            i_amount=""
         if request.POST.get("total"):
             i_total=request.POST.get("total")
         else:
@@ -509,10 +554,23 @@ def additem(request):
         else:
             i_notes=""
         project = request.POST.get('projects', None) 
+        if request.POST.get("datepicker"):
+            month,day,year = request.POST.get("datepicker").split('/')
+            month=month.encode('utf-8')
+            day=day.encode('utf-8')
+            year=year.encode('utf-8')
+            print("day: ",day," month: ",month," year: ",year)
+            day=int(day)
+            month=int(month)
+            year=int(year)
+            testdate=datetime.datetime(year,month,day)
+            i_date=testdate
+        else:
+            i_date=today_date
         if project != 'defult':
             pro_obj=Project.objects.get(name=project)
-            obj=Item(project=pro_obj,item_title=i_title,item_price=i_price,item_amount=i_amount,item_total=i_total,item_date=date.today(),item_description=i_notes)
-            if Item.objects.filter(project=pro_obj,item_title=i_title,item_price=i_price,item_amount=i_amount,item_total=i_total,item_date=date.today(),item_description=i_notes).exists():
+            obj=Item(project=pro_obj,item_title=i_title,item_price=i_price,item_amount=i_amount,item_total=i_total,item_description=i_notes,item_date=i_date)
+            if Item.objects.filter(project=pro_obj,item_title=i_title,item_price=i_price,item_amount=i_amount,item_total=i_total,item_description=i_notes,item_date=i_date).exists():
                 # return items page
                 request.session['project']=project
             else:
@@ -523,8 +581,8 @@ def additem(request):
                 project=request.session.get("project")
                 pro_obj=Project.objects.get(name=project)
             
-                obj=Item(project=pro_obj,item_title=i_title,item_price=i_price,item_amount=i_amount,item_total=i_total,item_date=date.today(),item_description=i_notes)
-            if Item.objects.filter(project=pro_obj,item_title=i_title,item_price=i_price,item_amount=i_amount,item_total=i_total,item_date=date.today(),item_description=i_notes).exists():
+                obj=Item(project=pro_obj,item_title=i_title,item_price=i_price,item_amount=i_amount,item_total=i_total,item_description=i_notes,item_date=i_date)
+            if Item.objects.filter(project=pro_obj,item_title=i_title,item_price=i_price,item_amount=i_amount,item_total=i_total,item_description=i_notes,item_date=i_date).exists():
                 # return items page
                 request.session['project']=project
             else:
@@ -533,7 +591,7 @@ def additem(request):
         today_date=date.today()
         ss_items=Item.objects.all().values_list('item_title',flat=True)
         pro_obj=Project.objects.get(name=project)
-        items=Item.objects.filter(item_date=today_date,project=pro_obj)
+        items=Item.objects.filter(item_date=i_date,project=pro_obj)
         email=request.session.get("email")
         user_obj=User.objects.get(user_email=email)
         request.session['username']=user_obj.user_name
@@ -543,8 +601,7 @@ def additem(request):
         if request.session.get("project"):
             project=request.session.get("project")
             pro_obj=Project.objects.get(name=project)
-   
-            items=Item.objects.filter(item_date=today_date,project=pro_obj)
+            items=Item.objects.filter(item_date=i_date,project=pro_obj)
             all_price=0
             for item in items:
                 ss=int(item.item_total.encode('utf-8'))
@@ -621,7 +678,6 @@ def addproj(request):
             obj=Project(name=pro_name)
             obj.save()
             request.session["project"]=pro_name
-           
             today_date=date.today()
             email=request.session.get("email")
             user_obj=User.objects.get(user_email=email)
@@ -648,7 +704,6 @@ def addproj(request):
         role=request.session.get("role")
         if request.session.get("project"):
             project=request.session.get("project")
- 
             return render(request,'addproj.html',{'project':project,'username':username,'role':role,'today_date':today_date})
         return render(request,'addproj.html',{'username':username,'role':role,'today_date':today_date})	
 ###################################################################
@@ -715,18 +770,31 @@ def addshek(request):
     if request.method == 'POST':
         # get information of shek
         i_num=request.POST.get("num")
+        i_serial=request.POST.get("serial")
         # i_date=request.POST.get("date
-        i_date=date.today()
+        today_date=date.today()
+        if request.POST.get("datepicker"):
+            month,day,year = request.POST.get("datepicker").split('/')
+            month=month.encode('utf-8')
+            day=day.encode('utf-8')
+            year=year.encode('utf-8')
+            print("day: ",day," month: ",month," year: ",year)
+            day=int(day)
+            month=int(month)
+            year=int(year)
+            testdate=datetime.datetime(year,month,day)
+            i_date=testdate
+        else:
+            i_date=today_date
         i_amount=request.POST.get("amount") 
         # if request.session.get("project"):
         project=request.session.get("project")
         pro_obj=Project.objects.get(name=project)
 
-        obj=Shek(num=i_num,date=i_date,amount=i_amount,project=pro_obj)
-        if Shek.objects.filter(num=i_num,date=i_date,amount=i_amount,project=pro_obj).exists():
+        obj=Shek(serial=i_serial,num=i_num,date=i_date,amount=i_amount,project=pro_obj)
+        if Shek.objects.filter(serial=i_serial,num=i_num,date=i_date,amount=i_amount,project=pro_obj).exists():
             items=Shek.objects.filter(project=pro_obj)
         else:
-
             obj.save()
         items=Shek.objects.filter(project=pro_obj)
         email=request.session.get("email")
@@ -747,26 +815,31 @@ def addshek(request):
         role=request.session.get("role")
         # if request.session.get("project"):
         project=request.session.get("project")
-        
         return render(request,'addshek.html',{'today_date':today_date,'project':project,'username':username,'role':role})
 #############################################################################
 # to add new m2awel
 def addm2awel(request):
+    today_date=date.today()
     if request.method == 'POST':
         # get information of m2awel
         i_name=request.POST.get("name")
         i_money=request.POST.get("money")
-        i_paid=request.POST.get("paid")
+
+        if request.POST.get("paid"):
+            i_paid=request.POST.get("paid")
+        else:
+            i_paid=0
         i_job=request.POST.get("job")
-        # if request.session.get("project"):
         project=request.session.get("project")
         pro_obj=Project.objects.get(name=project)
-
         obj=M2awel(name=i_name,money=i_money,paid=i_paid,job=i_job,project=pro_obj)
         if M2awel.objects.filter(name=i_name,money=i_money,paid=i_paid,job=i_job,project=pro_obj).exists():
             persons=M2awel.objects.filter(project=pro_obj)   
         else:
             obj.save()
+            if i_paid != 0:
+                transaction_obj=Transaction(action_paid=i_paid,action_date=today_date,m2awel=obj)
+                transaction_obj.save()
         persons=M2awel.objects.filter(project=pro_obj)
         email=request.session.get("email")
         user_obj=User.objects.get(user_email=email)
@@ -784,17 +857,14 @@ def addm2awel(request):
         role=request.session.get("role")
         # if request.session.get("project"):
         project=request.session.get("project")
-        
         return render(request,'addm2awel.html',{'project':project,'username':username,'role':role})
 #############################################################################
 # to delete existing item 
 def delitem(request,uid):
     Item.objects.filter(id=uid).delete()
     today_date=date.today()
-    # if request.session.get("project"):
     project=request.session.get("project")
     pro_obj=Project.objects.get(name=project)
-
     ss_items=Item.objects.all().values_list('item_title',flat=True)
     items=Item.objects.filter(item_date=today_date)
     email=request.session.get("email")
@@ -802,21 +872,17 @@ def delitem(request,uid):
     request.session['username']=user_obj.user_name
     username=request.session.get("username")
     request.session['role']=user_obj.user_role
-    # project=request.session.get("project")
-    # pro_obj=Project.objects.get(name=project)
-    # items=Item.objects.filter(item_date=today_date,project=pro_obj)
     all_price=0
     for item in items:
         ss=int(item.item_total.encode('utf-8'))
         all_price=all_price+ss
     role=request.session.get("role")
     return render(request,'today.html',{'project':project,'username':username,'items':items,'today_date':today_date,'all_items':ss_items,'all_price':all_price,'role':role})
-
 ##############################################################################
 # to delete existing shek
 def delshek(request,uid):
     Shek.objects.filter(id=uid).delete()
-    today_date=time.strftime("%d/%m/%Y")
+    today_date=date.today()
     items=Shek.objects.all()
     email=request.session.get("email")
     user_obj=User.objects.get(user_email=email)
@@ -824,7 +890,6 @@ def delshek(request,uid):
     username=request.session.get("username")
     request.session['role']=user_obj.user_role
     role=request.session.get("role")
-    # if request.session.get("project"):
     project=request.session.get("project")
     return render(request,'shekat.html',{'project':project,'username':username,'items':items,'role':role})
 ##############################################################################
@@ -848,6 +913,7 @@ def delm2awel(request,uid):
 def edititem(request,uid):
     if request.method == 'POST':
         obj=Item.objects.get(id=uid)
+        today_date=date.today()
         if request.POST.get("title"):
             obj.item_title=request.POST.get("title")
         if request.POST.get("price"):
@@ -860,11 +926,25 @@ def edititem(request,uid):
             obj.item_date=request.POST.get("date")
         if request.POST.get("notes"):
             obj.item_description=request.POST.get("notes")
+        if request.POST.get("datepicker"):
+            month,day,year = request.POST.get("datepicker").split('/')
+            month=month.encode('utf-8')
+            day=day.encode('utf-8')
+            year=year.encode('utf-8')
+            print("day: ",day," month: ",month," year: ",year)
+            day=int(day)
+            month=int(month)
+            year=int(year)
+            testdate=datetime.datetime(year,month,day)
+            i_date=testdate
+            obj.item_date=i_date
+        else:
+            i_date=today_date
+            obj.item_date=i_date
         obj.save()
         # if request.session.get("project"):
         project=request.session.get("project")
         pro_obj=Project.objects.get(name=project)
-  
         items=Item.objects.filter(project=pro_obj)
         email=request.session.get("email")
         user_obj=User.objects.get(user_email=email)
@@ -872,14 +952,11 @@ def edititem(request,uid):
         username=request.session.get("username")
         request.session['role']=user_obj.user_role
         today_date=date.today()
-        # project=request.session.get("project")
-        # pro_obj=Project.objects.get(name=project)
         items=Item.objects.filter(item_date=today_date,project=pro_obj)
         all_price=0
         for item in items:
             ss=int(item.item_total.encode('utf-8'))
             all_price=all_price+ss
-        # project=request.session.get("project")
         role=request.session.get("role")
         return render(request,'today.html',{'project':project,'username':username,'role':role,'items':items,'today_date':today_date,'all_price':all_price})
     else:
@@ -887,14 +964,13 @@ def edititem(request,uid):
         today_date=date.today()
         if request.session.get("project"):
             project=request.session.get("project")
-
             email=request.session.get("email")
             user_obj=User.objects.get(user_email=email)
             request.session['username']=user_obj.user_name
             username=request.session.get("username")
             request.session['role']=user_obj.user_role
             role=request.session.get("role")
-            return render(request,'edititem.html',{'project':project,'obj':obj,'today_date':today_date,'username':username,'role':role})
+            return render(request,'additem.html',{'project':project,'obj':obj,'today_date':today_date,'username':username,'role':role})
 ##############################################################################
 # to edit m2awel info
 def editm2awel(request,uid):
@@ -907,7 +983,6 @@ def editm2awel(request,uid):
         if request.POST.get("job"):
             obj.job=request.POST.get("job")
         obj.save()
-        # if request.session.get("project"):
         project=request.session.get("project")
         pro_obj=Project.objects.get(name=project)
         persons=M2awel.objects.filter(project=pro_obj)
@@ -926,20 +1001,23 @@ def editm2awel(request,uid):
         request.session['username']=user_obj.user_name
         username=request.session.get("username")
         request.session['role']=user_obj.user_role
-        # if request.session.get("project"):
         project=request.session.get("project")
-      
         role=request.session.get("role")
         return render(request,'editm2awel.html',{'project':project,'obj':obj,'username':username,'role':role})
 ##############################################################################
 # to edit action info
-def editaction(request,uid):
+def editaction(request,uid,aid):
     if request.method == 'POST':
         obj=M2awel.objects.get(id=uid)
-        action_obj=Transaction.objects.get(m2awel=obj)
+        # # ac_paid=request.session.get("action_paid")
+        # # print("action_paid",ac_paid)
+        ac_obj=Transaction.objects.get(id=aid)
+        print("action_paid",ac_obj.action_paid)
+        action_obj=Transaction.objects.get(m2awel=obj,action_paid=ac_obj.action_paid)
         if request.POST.get("paid"):
+
             action_obj.action_paid=request.POST.get("paid")
-        action_obj.save()
+            action_obj.save()
         actions=Transaction.objects.filter(m2awel=obj)
         email=request.session.get("email")
         user_obj=User.objects.get(user_email=email)
@@ -952,7 +1030,9 @@ def editaction(request,uid):
         return render(request,'viewm2awel.html',{'project':project,'username':username,'role':role,'obj':obj,'actions':actions})
     else:
         obj=M2awel.objects.get(id=uid)
-        action_obj=Transaction.objects.get(m2awel=obj)
+        ac_obj=Transaction.objects.get(id=aid)
+        print("action_paid",ac_obj.action_paid)
+        action_obj=Transaction.objects.get(m2awel=obj,action_paid=ac_obj.action_paid)
         email=request.session.get("email")
         user_obj=User.objects.get(user_email=email)
         request.session['username']=user_obj.user_name
@@ -970,14 +1050,31 @@ def editshek(request,uid):
         # if request.session.get("project"):
         project=request.session.get("project")
         pro_obj=Project.objects.get(name=project)
-     
         obj=Shek.objects.get(id=uid)
+        if request.POST.get("serial"):
+            obj.serial=request.POST.get("serial")
         if request.POST.get("num"):
             obj.num=request.POST.get("num")
         if request.POST.get("date"):
             obj.date=request.POST.get("date")
         if request.POST.get("amount"):
             obj.amount=request.POST.get("amount")
+        today_date=date.today()
+        if request.POST.get("datepicker"):
+            month,day,year = request.POST.get("datepicker").split('/')
+            month=month.encode('utf-8')
+            day=day.encode('utf-8')
+            year=year.encode('utf-8')
+            print("day: ",day," month: ",month," year: ",year)
+            day=int(day)
+            month=int(month)
+            year=int(year)
+            testdate=datetime.datetime(year,month,day)
+            i_date=testdate
+            obj.date=i_date
+        else:
+            i_date=today_date
+            obj.date=i_date
         obj.save()
         items=Shek.objects.filter(project=pro_obj)
         email=request.session.get("email")
@@ -1009,6 +1106,10 @@ def addaction(request,uid):
         i_paid=int(i_paid)
         obj=Transaction(action_paid=i_paid,action_date=today_date,m2awel=m2awel_obj)
         obj.save()
+        # request.session["action_date"]=today_date
+        request.session['action_paid']=i_paid
+        ac_paid=request.session.get("action_paid")
+        print("action_paid",ac_paid)
         actions=Transaction.objects.filter(m2awel=m2awel_obj)
         email=request.session.get("email")
         user_obj=User.objects.get(user_email=email)
@@ -1016,9 +1117,7 @@ def addaction(request,uid):
         username=request.session.get("username")
         request.session['role']=user_obj.user_role
         role=request.session.get("role")
-        # if request.session.get("project"):
         project=request.session.get("project")
-       
         return render(request,'viewm2awel.html',{'project':project,'username':username,'role':role,'obj':m2awel_obj,'actions':actions})
     else:
         m2awel_obj=M2awel.objects.get(id=uid)
@@ -1048,7 +1147,6 @@ def sheksearch(request):
             month=int(month)
             year=int(year)
             testdate=datetime.datetime(year,month,day)
-            # ss_items=Item.objects.all().values_list('item_title',flat=True)
             shekat=Shek.objects.filter(date=testdate)
             email=request.session.get("email")
             user_obj=User.objects.get(user_email=email)
@@ -1056,13 +1154,11 @@ def sheksearch(request):
             username=request.session.get("username")
             request.session['role']=user_obj.user_role
             role=request.session.get("role")
-            # if request.session.get("project"):
             project=request.session.get("project")
             pro_obj=Project.objects.get(name=project)
             today_date=date.today()
         else:
             today_date=date.today()
-            # ss_items=Item.objects.all().values_list('item_title',flat=True)
             shekat=Shek.objects.filter(date=today_date)
             email=request.session.get("email")
             user_obj=User.objects.get(user_email=email)
@@ -1070,15 +1166,13 @@ def sheksearch(request):
             username=request.session.get("username")
             request.session['role']=user_obj.user_role
             role=request.session.get("role")
-            # if request.session.get("project"):
             project=request.session.get("project")
             pro_obj=Project.objects.get(name=project)
-        return render(request,'shekat.html',{'today_date':today_date,'test_date':testdate,'project':project,'username':username,'role':role,'today_date':today_date,'items':shekat})
-##################################################3
+        return render(request,'shekat.html',{'today_date':today_date,'test_date':shek_date,'project':project,'username':username,'role':role,'today_date':today_date,'items':shekat})
+##################################################
 # to view m2awel transactions
 def viewm2awel(request,uid):
     obj=M2awel.objects.get(id=uid)
-    # if request.session.get("project"):
     project=request.session.get("project")
     pro_obj=Project.objects.get(name=project)
     actions=Transaction.objects.filter(m2awel=obj)
@@ -1089,3 +1183,116 @@ def viewm2awel(request,uid):
     request.session['role']=user_obj.user_role
     role=request.session.get("role")
     return render(request,'viewm2awel.html',{'project':project,'role':role,'username':username,'obj':obj,'actions':actions})
+#######################################################################
+
+def itemsearch(request):
+    aa_items=Item.objects.all()
+    if request.method == 'POST':
+        item=request.POST.get("items",None)
+        if item == 'defult':
+            today_date=date.today()
+            aa_items=Item.objects.all()
+            ss_items=Item.objects.all().values_list('item_title',flat=True)
+            items=Item.objects.all()
+            if request.session.get("project"):
+                project=request.session.get("project")
+                pro_obj=Project.objects.get(name=project)
+                all_price=0
+                for item in items:
+                    ss=int(item.item_total.encode('utf-8'))
+                    all_price=all_price+ss
+                email=request.session.get("email")
+                user_obj=User.objects.get(user_email=email)
+                request.session['username']=user_obj.user_name
+                username=request.session.get("username")
+                request.session['role']=user_obj.user_role
+                role=request.session.get("role")
+                return render(request,'today.html',{'aa_items':aa_items,'project':project,'username':username,'role':role,'items':items,'today_date':today_date,'all_items':ss_items,'all_price':all_price})
+            else:
+                email=request.session.get("email")
+                user_obj=User.objects.get(user_email=email)
+                request.session['username']=user_obj.user_name
+                username=request.session.get("username")
+                request.session['role']=user_obj.user_role
+                role=request.session.get("role")
+                return render(request,'today.html',{'aa_items':aa_items,'username':username,'role':role,'today_date':today_date})
+        else:
+            items=Item.objects.filter(item_title=item)
+            if request.session.get("project"):
+                project=request.session.get("project")
+                pro_obj=Project.objects.get(name=project)
+                all_price=0
+                for item in items:
+                    ss=int(item.item_total.encode('utf-8'))
+                    all_price=all_price+ss
+                email=request.session.get("email")
+                user_obj=User.objects.get(user_email=email)
+                request.session['username']=user_obj.user_name
+                username=request.session.get("username")
+                request.session['role']=user_obj.user_role
+                role=request.session.get("role")
+                return render(request,'today.html',{'aa_items':aa_items,'project':project,'username':username,'role':role,'items':items,'all_items':aa_items,'all_price':all_price})
+            else:
+                email=request.session.get("email")
+                user_obj=User.objects.get(user_email=email)
+                request.session['username']=user_obj.user_name
+                username=request.session.get("username")
+                request.session['role']=user_obj.user_role
+                role=request.session.get("role")
+                return render(request,'today.html',{'aa_items':aa_items,'username':username,'role':role,'today_date':today_date})
+
+def sheksearch(request):
+    aa_items=Shek.objects.all()
+    if request.method == 'POST':
+        item=request.POST.get("items",None)
+        if item == 'defult':
+            today_date=date.today()
+            aa_items=Shek.objects.all()
+            ss_items=Shek.objects.all().values_list('serial',flat=True)
+            items=Shek.objects.all()
+            if request.session.get("project"):
+                project=request.session.get("project")
+                pro_obj=Project.objects.get(name=project)
+                all_price=0
+                # for item in items:
+                #     ss=int(item.item_total.encode('utf-8'))
+                #     all_price=all_price+ss
+                email=request.session.get("email")
+                user_obj=User.objects.get(user_email=email)
+                request.session['username']=user_obj.user_name
+                username=request.session.get("username")
+                request.session['role']=user_obj.user_role
+                role=request.session.get("role")
+                return render(request,'shekat.html',{'aa_items':aa_items,'project':project,'items':aa_items,'role':role,'username':username,'today_date':today_date})
+            else:
+                email=request.session.get("email")
+                user_obj=User.objects.get(user_email=email)
+                request.session['username']=user_obj.user_name
+                username=request.session.get("username")
+                request.session['role']=user_obj.user_role
+                role=request.session.get("role")
+                return render(request,'shekat.html',{'aa_items':aa_items,'project':project,'items':aa_items,'role':role,'username':username,'today_date':today_date})
+        else:
+            items=Shek.objects.filter(serial=item)
+            if request.session.get("project"):
+                project=request.session.get("project")
+                pro_obj=Project.objects.get(name=project)
+                all_price=0
+                # for item in items:
+                #     ss=int(item.item_total.encode('utf-8'))
+                #     all_price=all_price+ss
+                email=request.session.get("email")
+                user_obj=User.objects.get(user_email=email)
+                request.session['username']=user_obj.user_name
+                username=request.session.get("username")
+                request.session['role']=user_obj.user_role
+                role=request.session.get("role")
+                return render(request,'shekat.html',{'aa_items':aa_items,'project':project,'items':items,'role':role,'username':username})
+            else:
+                email=request.session.get("email")
+                user_obj=User.objects.get(user_email=email)
+                request.session['username']=user_obj.user_name
+                username=request.session.get("username")
+                request.session['role']=user_obj.user_role
+                role=request.session.get("role")
+                return render(request,'shekat.html',{'aa_items':aa_items,'project':project,'items':aa_items,'role':role,'username':username,'today_date':today_date})

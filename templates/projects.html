@@ -1,19 +1,12 @@
 <!DOCTYPE>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {% load static %}
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
-    <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
-    <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/test_today.css'%}"/>
-<!--     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" /> -->
-    <!-- Load jQuery JS -->
-<!--     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    Load jQuery UI Main JS 
-    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
-    <script type="text/javascript">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
+  <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/test_today.css'%}"/>
+  <script type="text/javascript">
       $(document).ready(
         /* This is the function that will get executed after the DOM is fully loaded */
         function () 
@@ -25,83 +18,113 @@
           });
         }
       );
-    </script>
-  </head>
-  <body>
-    <div id="wrapper">
-	   <div id="header-wrapper">
-		    <div id="menu" class="container" style="background:#121079;">
-            <ul>
-            {% if role == "Admin" %}
-            <li  class="current_page_item">
+  </script>
+</head>
+<body>
+  <div id="wrapper">
+	  <div id="header-wrapper">
+		  <div id="menu" class="container" style="background:#121079;">
+        <ul>
+          {% if role == "Admin" %}
+          <li >
+            <a  href="/accounts/" accesskey="1" title="">الحسابات</a>
+          </li>
+          <li  class="current_page_item">
             <a href="/projects/" accesskey="4" title="">المشاريع</a>
           </li>
-                <li ><a  href="/accounts/" accesskey="1" title="">الحسابات</a></li>
-                <li><a href="/shekat/" accesskey="4" title="">الرصيد</a></li>
-                <li><a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a></li>
-                <li><a href="/today/" accesskey="3" title="">اليومية</a></li>
-                <li ><a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a></li>
-                {% else %}
-                <li class="current_page_item">
-            <a href="/projects/" accesskey="4" title="">المشاريع</a>
+          <li>
+            <a href="/shekat/" accesskey="4" title="">الرصيد</a>
           </li>
-                <li><a href="/shekat/" accesskey="4" title="">الرصيد</a></li>
-                <li><a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a></li>
-                <li ><a href="/today/" accesskey="3" title="">اليومية</a></li>
-                <li ><a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a></li>
-                {% endif %}
-            </ul>
-		      </div>
-	     </div>
-	     <div id="page" class="container">
-        	{% if username%}
-          
-      
-         
-          <center>
-     
-             <table style="width: 450px">
-            <!--  {% if test_date %}
-                <caption><h1>{{test_date}} .. {{project}} </h1></caption>
-                {% else %}
-                <caption><h1>{{today_date}} .... {{project}} </h1></caption>
-                {% endif %} -->
-                <tr>
-                    <th>الظبط</th>
-                    <th>اسم المشروع</th>
-                </tr>
-               {% for project in projects %}
-                <tr>
-                    <td style="width:50%">
-                         <a  href="/usepro/{{project.id}}/" style="font-size:18px;color:red;float:right;padding:10px;">استخدام</a>
-                      <a  href="/editpro/{{project.id}}" style="color:blue;float:right;padding:10px;font-size:18px;">تعديل</a> 
-                      <a  href="/delipro/{{project.id}}/" style="font-size:18px;color:red;float:right;padding:10px;">حذف</a>
-                    </td>
-                
-                    <td style="direction: rtl; text-align: right;">{{project.name}}
-                    </td>
-                    
-                </tr>
-                {% endfor %}
-              </table>
-              <center>
-              <h1>
-                <a href="/addj/" style="color:blue;margin-right:155px;">اضافة مشروع جديد</a>
-              </h1>
-              </center>
-              </center>
-              
-		        {% else %}
-            <center>
-                <p style="color:red; font-size:22px;">لابد من تسجيل دخول حتى ترى هذة الصفحة</p>
-     		         <div style="margin: 15px;">
-		                <a style="color:blue; font-size:20px" href="/login/">تسجيل دخول</a>
-		                <a style="color:green;margin-right:30px;font-size:20px" href="/register/">انشاء حساب </a>
-                  </div>
-            </center>
-		        {% endif %}
-	       </div>
+          <li>
+            <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+          </li>
+          <li>
+            <a href="/today/" accesskey="3" title="">اليومية</a>
+          </li>
+          <li >
+            <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+          </li>
+          {% elif role == "Accountant" %}
+                    <li class="current_page_item">
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                    <li>
+                        <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+                    </li>
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li >
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
+                    {% else %}
+                     <li class="current_page_item">
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                 
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li >
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
+          {% endif %}
+        </ul>
+		  </div>
+	  </div>
+	  <div id="page" class="container">
+    {% if username%}
+      <center>
+      {% if projects %}
+        <table style="width: 450px">
+          <tr>
+              <th>الظبط</th>
+              <th>اسم المشروع</th>
+          </tr>
+          {% for project in projects %}
+          <tr>
+              <td style="width:50%">
+                  <a  href="/usepro/{{project.id}}/" style="font-size:18px;color:red;float:right;padding:10px;">استخدام</a>
+                  {% if role == "Admin" %}
+                  <a  href="/editpro/{{project.id}}" style="color:blue;float:right;padding:10px;font-size:18px;">تعديل</a> 
+                  <a  href="/delipro/{{project.id}}/" style="font-size:18px;color:red;float:right;padding:10px;">حذف</a>
+                  {% endif %}
+              </td>
+              <td style="direction: rtl; text-align: right;">{{project.name}}
+              </td>
+          </tr>
+          {% endfor %}
+        </table>
+        <center>
+          <h1>
+            <a href="/addj/" style="color:blue;margin-right:155px;">اضافة مشروع جديد</a>
+          </h1>
+        </center>
+      </center>
+    {% else %}
+      <center>
+          <h1>
+            <a href="/addj/" style="color:blue;margin-right:155px;">اضافة مشروع جديد</a>
+          </h1>
+      </center>
+    </center>
+    {% endif %}
+		{% else %}
+    <center>
+      <p style="color:red; font-size:22px;">لابد من تسجيل دخول حتى ترى هذة الصفحة</p>
+     	<div style="margin: 15px;">
+		      <a style="color:blue; font-size:20px" href="/login/">تسجيل دخول</a>
+		      <a style="color:green;margin-right:30px;font-size:20px" href="/register/">انشاء حساب </a>
       </div>
-     
-    </body>
+    </center>
+		{% endif %}
+	</div>
+</div>
+</body>
 </html>

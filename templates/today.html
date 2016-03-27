@@ -1,140 +1,201 @@
 <!DOCTYPE>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {% load static %}
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
-    <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
-    <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/test_today.css'%}"/><!-- 
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" /> -->
-    <!-- Load jQuery JS -->
-    <!-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    Load jQuery UI Main JS 
-    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
-    <script type="text/javascript">
-      $(document).ready(
-        /* This is the function that will get executed after the DOM is fully loaded */
-        function () 
-        {
-          $( "#datepicker" ).datepicker({
-              changeMonth: true,//this option for allowing user to select month
-              changeYear: true //this option for allowing user to select from year range
-              // dateFormat: 'yy-mm-dd'
-          });
-        }
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
+  <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/test_today.css'%}"/>
+   <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+  <script src="{% static 'js/jquery.js' %}"></script>
+  <script src="{% static 'js/jquery-ui.js' %}"></script>
+  <script type="text/javascript">
+   $(function() {
+    $( "#datepicker" ).datepicker();
+  });
+    $(document).ready(
+        // /* This is the function that will get executed after the DOM is fully loaded */
+        // function () 
+        // {
+        //   $( "#datepicker" ).datepicker({
+        //       changeMonth: true,//this option for allowing user to select month
+        //       changeYear: true //this option for allowing user to select from year range
+        //       // dateFormat: 'yy-mm-dd'
+        //       // dateFormat: 'dd.mm.yy',
+        //   });
+        // }
       );
-    </script>
-  </head>
-  <body>
-    <div id="wrapper">
-	   <div id="header-wrapper">
-		    <div id="menu" class="container" style="background:#121079;">
-            <ul>
-            {% if role == "Admin" %}
-            <li>
+  
+       function asd(data)
+       {
+         $( "#tags" ).autocomplete({
+         source: data
+       }); 
+       }
+  </script>
+</head>
+<body>
+  <div id="wrapper">
+	  <div id="header-wrapper">
+		  <div id="menu" class="container" style="background:#121079;">
+        <ul>
+        {% if role == "Admin" %}
+          <li >
+            <a  href="/accounts/" accesskey="1" title="">الحسابات</a>
+          </li>
+          <li>
             <a href="/projects/" accesskey="4" title="">المشاريع</a>
           </li>
-                <li ><a  href="/accounts/" accesskey="1" title="">الحسابات</a></li>
-                <li><a href="/shekat/" accesskey="4" title="">الرصيد</a></li>
-                <li><a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a></li>
-                <li class="current_page_item"><a href="/today/" accesskey="3" title="">اليومية</a></li>
-                <li ><a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a></li>
-                {% else %}
-                <li>
-            <a href="/projects/" accesskey="4" title="">المشاريع</a>
+          <li>
+            <a href="/shekat/" accesskey="4" title="">الرصيد</a>
           </li>
-                <li><a href="/shekat/" accesskey="4" title="">الرصيد</a></li>
-                <li><a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a></li>
-                <li class="current_page_item"><a href="/today/" accesskey="3" title="">اليومية</a></li>
-                <li ><a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a></li>
-                {% endif %}
-            </ul>
-		      </div>
-	     </div>
-	     <div id="page" class="container">
-        	{% if username%}
-          
-        	<form class="search" method="post" action="/search/" style="float:right;" name="test">
-          {% csrf_token %}
-              <a href="javascript:document.forms['test'].submit()" style="color:red;float: right;">بحث</a>
-              <br>
-              <input type="text" id="datepicker" name="datepicker" style="direction: rtl; text-align: right;" placeholder="ابحث بالتاريخ"/>
-          </form>
-          <br>
-          <form>
-            <div class="form-row"  style="direction: rtl; text-align: right;">
-                <label style="direction: rtl; text-align: right;padding:-10px 60px ;"  >المدفوع اليومى</label>
-                <input type="text" disabled style="direction: rtl; text-align: right;" value="{{all_price}}" />
-            </div>
-          </form>
-          <a href="/addj/" style="float: right; color:red;" >اضافة مشروع جديد</a>
-          <br>
-         
-          <center>
-          {% if project %}
-             <table>
-             <caption><h2>{{project}}</h2></caption>
-             {% if test_date %}
-                <caption><h1>{{test_date}}</h1></caption>
-                {% else %}
-                <caption><h1>{{today_date}} </h1></caption>
-                {% endif %}
-                <tr>
-                    <th>الظبط</th>
-                    <th>ملاحظات</th>
-                    <th>التاريخ</th>
-                    <th>السعر الكلى</th>
-                    <th>الكمية</th>
-                    <th>سعر الوحدة</th>
-                    <th>الاسم</th>
-                    <th>اسم المشروع</th>
-                </tr>
-               {% for item in items %}
-                <tr>
-                    <td style="width:15%">
-                      <a  href="/edititem/{{item.id}}" style="color:blue;float:right;padding:10px;font-size:18px;">تعديل</a> 
-                      <a  href="/delitem/{{item.id}}/" style="font-size:18px;color:red;float:right;padding:10px;">حذف</a>
-                    </td>
-                    <td style="direction: rtl; text-align: right;">{{item.item_description}}
-                    </td>
-                    <td style="direction: rtl; text-align: right;">{{item.item_date}}
-                    </td>
-                    <td style="direction: rtl; text-align: right;">{{item.item_total}}
-                    </td>
-                    <td style="direction: rtl; text-align: right;">{{item.item_amount}}
-                    </td>
-                    <td style="direction: rtl; text-align: right;">{{item.item_price}}
-                    </td>
-                    <td style="direction: rtl; text-align: right;">{{item.item_title}}
-                    </td>
-                    <td style="direction: rtl; text-align: right;">{{item.project}}
-                    </td>
-                    
-                </tr>
-                {% endfor %}
-              </table>
-              <h1>
-                <a href="/additem/" style="color:blue;margin-right:155px;">اضافة عنصر جديد</a>
-              </h1>
-              </center>
-              {% else %}
-              <center>
-               <p style="color:red; font-size:22px;">لابد من اختيار مشروع </p>
-            </center>
-            {% endif %}
-		        {% else %}
-            <center>
-                <p style="color:red; font-size:22px;">لابد من تسجيل دخول حتى ترى هذة الصفحة</p>
-     		         <div style="margin: 15px;">
-		                <a style="color:blue; font-size:20px" href="/login/">تسجيل دخول</a>
-		                <a style="color:green;margin-right:30px;font-size:20px" href="/register/">انشاء حساب </a>
-                  </div>
-            </center>
-		        {% endif %}
-	       </div>
+          <li>
+            <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+          </li>
+          <li class="current_page_item">
+            <a href="/today/" accesskey="3" title="">اليومية</a>
+          </li>
+          <li >
+            <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+          </li>
+        {% elif role == "Accountant" %}
+                    <li>
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                    <li>
+                        <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+                    </li>
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li  >
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
+                    {% else %}
+                     <li>
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                 
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li >
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
+        {% endif %}
+      </ul>
+		</div>
+	 </div>
+	 <div id="page" class="container">
+    {% if username%}
+    <!-- <p>Date: <input type="text" id="datepicker"></p> -->
+      <div class="form-row"  style="direction: rtl; text-align: right;">
+        <form class="search" method="POST" action="/itemsearch/" style="float:right;" name="test">
+        {% csrf_token %}
+          <a href="javascript:document.forms['test'].submit()" style="direction: rtl; text-align: right;color:red;float: right;">البحث بالاسم</a>
+          <select name="items" id="items" style="float:right;direction: rtl; text-align: right;">
+            <option value="defult" selected="">اختر اسم العنصر من هنا</option>
+            {% for item in aa_items %}
+            <option value="{{item.item_title}}">{{item.item_title}}</option>
+            {% endfor %}
+          </select>
+        </form>
       </div>
-     
-    </body>
+      <form class="search" method="post" action="/search/" style="float:right; " name="testt">
+      {% csrf_token %}
+        <a href="javascript:document.forms['testt'].submit()" style="color:red;float: right;">بحث</a>
+        <br>
+        <input type="text" id="datepicker" name="datepicker" style="direction: rtl; text-align: right;">
+         <!-- <input type="text" id="datepicker" style="direction: rtl; text-align: right;" placeholder="ابحث بالتاريخ"/> -->
+      </form>
+    </div>
+    <div   style="direction: rtl; text-align: right;margin-top: -50px;">
+      <a href="/addj/" style=" color:red;float: right;" >اضافة مشروع جديد</a>
+      <br>   
+      <br>
+      <center>
+      {% if project %}
+        {% if items %}
+          <table>
+            <caption><h2>{{project}} ... <font color="green">{{all_price}}</font></h2></caption>
+            {% if test_date %}
+              <caption><h1>{{test_date}}</h1></caption>
+            {% else %}
+              <caption><h1>{{today_date}} </h1></caption>
+            {% endif %}
+            <tr>
+              <th>اسم المشروع</th>
+              <th>الاسم</th>
+              <th>سعر الوحدة</th>
+              <th>الكمية</th>
+              <th>السعر الكلى</th>
+              <th>التاريخ</th>
+              <th>ملاحظات</th>
+              {% if role ==  "Admin" %}
+              <th>الظبط</th>
+              {% endif %}
+            </tr>
+            {% for item in items %}
+            <tr>
+              <td style="direction: rtl; text-align: right;">{{item.project}}
+              </td>
+              <td style="direction: rtl; text-align: right;">{{item.item_title}}
+              </td>
+              <td style="direction: rtl; text-align: right;">{{item.item_price}}
+              </td>
+              <td style="direction: rtl; text-align: right;">{{item.item_amount}}
+              </td>
+              <td style="direction: rtl; text-align: right;">{{item.item_total}}
+              </td>
+              <td style="direction: rtl; text-align: right;">{{item.item_date}}
+              </td>
+              <td style="direction: rtl; text-align: right;">{{item.item_description}}
+              </td>
+              {% if role == "Admin" %}
+              <td style="width:15%">
+                <a  href="/edititem/{{item.id}}" style="color:blue;float:right;padding:10px;font-size:18px;">تعديل</a> 
+                <a  href="/delitem/{{item.id}}/" style="font-size:18px;color:red;float:right;padding:10px;">حذف</a>
+              </td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </table>
+          <h1>
+            <a href="/additem/" style="color:blue;margin-right:155px;">اضافة عنصر جديد</a>
+          </h1>
+        </center>
+        {% else %}
+         {% if test_date %}
+      <center><p style="color:red; font-size:22px;">لا توجد عناصر لهذا التاريخ</p></center>
+      {% else %}
+        <center>
+          <h1>
+            <a href="/additem/" style="color:blue;margin-right:155px;">اضافة عنصر جديد</a>
+          </h1>
+        </center>
+        {% endif %}
+        {% endif %}
+        {% else %}
+        <center>
+          <p style="color:red; font-size:22px;">لابد من اختيار مشروع </p>
+        </center>
+        {% endif %}
+		    {% else %}
+        <center>
+          <p style="color:red; font-size:22px;">لابد من تسجيل دخول حتى ترى هذة الصفحة</p>
+     		    <div style="margin: 15px;">
+		          <a style="color:blue; font-size:20px" href="/login/">تسجيل دخول</a>
+		          <a style="color:green;margin-right:30px;font-size:20px" href="/register/">انشاء حساب </a>
+            </div>
+        </center>
+		    {% endif %}
+	    </div>
+    </div>
+  </body>
 </html>

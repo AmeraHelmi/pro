@@ -1,54 +1,55 @@
 <!DOCTYPE>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {% load static %}
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
-    <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
-    <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
- <!--    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet"> -->
-    <link rel="stylesheet" type="text/css" href="{% static 'css/test_today.css'%}"/>
- <!--    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" /> -->
-    <!-- Load jQuery JS -->
-    <!-- <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    Load jQuery UI Main JS 
-    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
-    <script type="text/javascript">
-      $(document).ready(
-        /* This is the function that will get executed after the DOM is fully loaded */
-        function () {
-            $( "#datepicker" ).datepicker({
-                changeMonth: true,//this option for allowing user to select month
-                changeYear: true //this option for allowing user to select from year range
-            });
-          }
-        );
-    </script>
-    <style type="text/css">
-	     .submitLink {
-          background-color: transparent;
-          text-decoration: underline;
-          border: none;
-          color: blue;
-          cursor: pointer;
-        }
-
-      submitLink:focus {
-          outline: none;
-        }
-    </style>
-  </head>
-  <body>
-    <div id="wrapper">
-	   <div id="header-wrapper">
-		    <div id="menu" class="container" style="background:#121079;">
-			   <ul>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
+  <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/test_today.css'%}"/>
+  <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+  <script src="{% static 'js/jquery.js' %}"></script>
+  <script src="{% static 'js/jquery-ui.js' %}"></script>
+  <script type="text/javascript">
+    $(function() {
+    $( "#datepicker" ).datepicker();
+  });
+    $(document).ready(
+      /* This is the function that will get executed after the DOM is fully loaded */
+      // function () 
+      // {
+      //   $( "#datepicker" ).datepicker({
+      //       changeMonth: true,//this option for allowing user to select month
+      //       changeYear: true //this option for allowing user to select from year range
+      //   });
+      // }
+    );
+  </script>
+  <style type="text/css">
+	  .submitLink 
+    {
+      background-color: transparent;
+      text-decoration: underline;
+      border: none;
+      color: blue;
+      cursor: pointer;
+    }
+    submitLink:focus
+    {
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="wrapper">
+	  <div id="header-wrapper">
+		  <div id="menu" class="container" style="background:#121079;">
+			  <ul>
 				{% if role == "Admin" %}
-        <li>
-            <a href="/projects/" accesskey="4" title="">المشاريع</a>
-          </li>
           <li >
             <a  href="/accounts/" accesskey="1" title="">الحسابات</a>
+          </li>
+          <li>
+            <a href="/projects/" accesskey="4" title="">المشاريع</a>
           </li>
           <li class="current_page_item">
             <a href="/shekat/" accesskey="4" title="">الرصيد</a>
@@ -62,22 +63,36 @@
           <li >
             <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
           </li>
-        {% else %}
-        <li>
-            <a href="/projects/" accesskey="4" title="">المشاريع</a>
-          </li>
-          <li class="current_page_item">
-            <a href="/shekat/" accesskey="4" title="">الرصيد</a>
-          </li>
-          <li>
-            <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
-          </li>
-          <li>
-            <a href="/today/" accesskey="3" title="">اليومية</a>
-          </li>
-          <li >
-            <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
-          </li>
+        {% elif role == "Accountant" %}
+                    <li>
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+                    </li>
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li >
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
+                    {% else %}
+                     <li>
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                 
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
         {% endif %}
 			</ul>
 		</div>
@@ -85,23 +100,40 @@
 	<div id="page" class="container">
     {% if username %}
     <br>
+     <div class="form-row"  style="direction: rtl; text-align: right;">
+        <form class="search" method="POST" action="/sheksearch/" style="float:right;" name="test">
+        {% csrf_token %}
+          <a href="javascript:document.forms['test'].submit()" style="direction: rtl; text-align: right;color:red;float: right;">البحث برقم الدفعة</a>
+          <select name="items" id="items" style="float:right;direction: rtl; text-align: right;">
+            <option value="defult" selected="">اختر رقم الدفعة من هنا</option>
+            {% for item in aa_items %}
+            <option value="{{item.serial}}">{{item.serial}}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
     <form class="search" method="post" action="/sheksearch/" style="float:right;" name="test">
     {% csrf_token %}
       <a href="javascript:document.forms['test'].submit()"  style="color:red;float: right;">بحث</a>
       <br>
-      <input type="text" id="datepicker" name="datepicker" style="direction: rtl; text-align: right;" placeholder="ابحث بالتاريخ"/>
+     <input type="text" id="datepicker" name="datepicker"style="direction: rtl; text-align: right;">
     </form>
     <br>
     <br>
     <br>
     {% if project %}
     <center>
-    {% if test_date %}
-                <caption><h1>{{test_date}} .. {{project}} </h1></caption>
-                {% else %}
-               <caption><h1>{{today_date}} .. {{project}} </h1></caption>
-                <!-- <caption><h1>{{today_date}}</h1></caption> -->
-                {% endif %}
+
+    {% if items %}
+      {% if test_date %}
+          <caption>
+            <h1>{{project}} </h1>
+          </caption>
+      {% else %}
+          <caption>
+            <h1>{{project}} </h1>
+          </caption>
+      {% endif %}
       <table>
         <tr>
         {% if role == "Admin" %}
@@ -109,6 +141,7 @@
           <th>القيمة</th>
           <th>تاريخ الشيك</th>
           <th>رقم الشيك</th>
+           <th>رقم الدفعة</th>
           <th>اسم المشروع</th>
         {% else %}   
           <th>القيمة</th>
@@ -118,7 +151,7 @@
         {% endif %}
         </tr>
         {% if role == "Admin" %}
-         {% for item in items %}
+          {% for item in items %}
           <tr>
             <td style="width:15%">
               <a  href="/editshek/{{item.id}}" style="color:blue;float:right;padding:10px;font-size:18px;">تعديل</a> 
@@ -127,33 +160,47 @@
             <td style="direction: rtl; text-align: right;">{{item.amount}}</td>
             <td style="direction: rtl; text-align: right;">{{item.date}}</td>
             <td style="direction: rtl; text-align: right;">{{item.num}}</td>
-            <td style="direction: rtl; text-align: right;">{{item.project}}</td>
-            
+            <td style="direction: rtl; text-align: right;">{{item.serial}}</td>
+            <td style="direction: rtl; text-align: right;">{{item.project}}</td>  
           </tr>
-          {% endfor %}
+         {% endfor %}
         {% else %}
-        {% for item in items %}
+          {% for item in items %}
           <tr>
             <td style="direction: rtl; text-align: right;">{{item.amount}}</td>
             <td style="direction: rtl; text-align: right;">{{item.date}}</td>
             <td style="direction: rtl; text-align: right;">{{item.num}}</td>
             <td style="direction: rtl; text-align: right;">{{item.project}}</td>
           </tr>
-
-        {% endfor %}
+          {% endfor %}
         {% endif %}
       </table>
       <h1>
         <a href="/addshek/" style="color:blue;margin-right:155px;">اضافة شيك جديد</a>
       </h1>
-    </center>
-    {% else %}
+      {% else %}
+      {% if test_date %}
+      <center><p style="color:red; font-size:22px;">لا توجد شيكات لهذا التاريخ</p></center>
+       <h1>
+        <a href="/addshek/" style="color:blue;margin-right:155px;">اضافة شيك جديد</a>
+      </h1>
+      {% else %}
+      <!-- <center> -->
+      <h1>
+      <p style="color:red; font-size:22px;">لا توجد شيكات لهذا التاريخ</p>
+        <a href="/addshek/" style="color:blue;margin-right:155px;">اضافة شيك جديد</a>
+      </h1>
+      <!-- </center> -->
+      {% endif %}
+      {% endif %}
+  </center>
+  {% else %}
     <center>
-    <p style="color:red; font-size:22px;">لابد من اختيار المشروع </p>
+      <p style="color:red; font-size:22px;">لابد من اختيار المشروع </p>
     </center>
-    {% endif %}
-		{% else %}
-      <center>
+  {% endif %}
+	{% else %}
+    <center>
         <p style="color:red; font-size:22px;">لابد من تسجيل دخول حتى ترى هذة الصفحة</p>
      	  <div style="margin: 15px;">
 		        <a style="color:blue; font-size:20px" href="/login/">تسجيل دخول</a>
@@ -163,6 +210,5 @@
 		{% endif %}
 	</div>
 </div>
-
 </body>
 </html>

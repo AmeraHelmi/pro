@@ -1,4 +1,4 @@
-        function Calculate()
+function Calculate()
 {
   document.getElementById('total').placeholder="";
   var price_v = document.getElementById('price').value;
@@ -7,19 +7,9 @@
   document.getElementById('total').value=total_v;
   // document.signupForm.submit();
 }
- function test()
-        {
-          document.getElementById('price').disabled=true;
-          document.getElementById('price').value=null;
-          document.getElementById('price').placeholder="لا يمكنك ادخال سعر الوحدة";
-          document.getElementById('amount').placeholder="لا يمكنك ادخال الكمية";
-          document.getElementById('total').placeholder="ادخل اجمالى الحساب";
-          document.getElementById('amount').value=null;
-          document.getElementById('amount').disabled=true;
-          document.getElementById('total').disabled=false;
-        }
- function numbersonly(myfield, e, dec)
- {
+
+function numbersonly(myfield, e, dec)
+{
   var key;
    var keychar;
    if (window.event)

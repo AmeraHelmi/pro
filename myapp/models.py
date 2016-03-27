@@ -72,6 +72,7 @@ class Transaction(models.Model):
 
 # shekat data
 class Shek(models.Model):
+    serial=models.IntegerField()
     num=models.IntegerField()
     date=models.DateField(auto_now=False)
     amount=models.IntegerField()

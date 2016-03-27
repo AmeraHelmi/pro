@@ -1,13 +1,46 @@
 <!DOCTYPE>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {% load static %}
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
-    <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
-    <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
-    <link href="{% static 'css/test.css' %}" rel="stylesheet" type="text/css" media="all" />
-    <script type="text/javascript" src="{% static 'js/additem.js' %}"></script>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
+  <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
+  <link href="{% static 'css/test.css' %}" rel="stylesheet" type="text/css" media="all" />
+  <script type="text/javascript" src="{% static 'js/additem.js' %}"></script>
+   <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+  <script src="{% static 'js/jquery.js' %}"></script>
+  <script src="{% static 'js/jquery-ui.js' %}"></script>
+  <script type="text/javascript">
+   $(function() {
+    $( "#datepicker" ).datepicker();
+  });
+
+    function test()
+    {
+      var price=document.getElementById('price');
+      var amount=document.getElementById('amount');
+      var total=document.getElementById('total');
+      if(total.disabled == true)
+      {
+        total.disabled=false;
+        total.placeholder="ادخل اجمالى الحساب";
+        price.disabled=true;
+        price.placeholder="لا يمكنك ادخال سعر الوحدة";
+        // price.value=null;
+        amount.disabled=true;
+        amount.placeholder="لا يمكنك ادخال الكمية";
+        // amount.value=null;
+      }
+      else if(total.disabled == false)
+      {
+        total.disabled=true;
+        price.disabled=false;
+        price.placeholder="ادخل سعر الوحدة هنا";
+        amount.placeholder="ادخل الكمية هنا";
+        amount.disabled=false;
+      }
+   }
+  </script>
 </head>
 <body>
 <div id="wrapper">
@@ -15,57 +48,75 @@
 		<div id="menu" class="container" style="background:#121079;">
 	   <ul>
       {% if role == "Admin" %}
-      <li>
-            <a href="/projects/" accesskey="4" title="">المشاريع</a>
-          </li>
-        <li >
+       <li >
           <a  href="/accounts/" accesskey="1" title="">الحسابات</a>
         </li>
-        <li>
+       <li>
+          <a href="/projects/" accesskey="4" title="">المشاريع</a>
+       </li>     
+       <li>
           <a href="/shekat/" accesskey="4" title="">الرصيد</a>
-        </li>
-        <li>
+       </li>
+       <li>
           <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
-        </li>
-        <li class="current_page_item">
+       </li>
+       <li class="current_page_item">
           <a href="/today/" accesskey="3" title="">اليومية</a>
-        </li>
-        <li >
+       </li>
+       <li >
           <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
-        </li>
-      {% else %}
-      <li>
-            <a href="/projects/" accesskey="4" title="">المشاريع</a>
-          </li>
-        <li>
-          <a href="/shekat/" accesskey="4" title="">الرصيد</a>
-        </li>
-        <li>
-          <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
-        </li>
-        <li>
-          <a href="/today/" accesskey="3" title="">اليومية</a>
-        </li>
-        <li class="current_page_item">
-          <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
-        </li>
+       </li>
+      {% elif role == "Accountant" %}
+                    <li>
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                    <li>
+                        <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+                    </li>
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
+                    {% else %}
+                     <li>
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                 
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
       {% endif %}
     </ul>
 	</div>
 </div>
 <div id="page" class="container">
   <div style="margin:40px;">
-    <form action="/additem/" method="post" id="signupForm">
+  {% if obj %}
+  <!-- edit -->
+       
+    <form action="/edititem/{{obj.id}}" method="post" id="signupForm">
     {% csrf_token %}
       <center>
-        <caption><h1>{{today_date}}</h1></caption>
+        <!-- <caption><h1>{{today_date}}</h1></caption> -->
         <div class="fieldContainer">
           <div class="formRow">
             <div class="label">
               <label for="name">الاسم</label>
             </div>
             <div class="field">
-              <input type="text" name="title" id="name" required placeholder=" ادخل اسم العنصر هنا"style="direction: rtl; text-align: right;"/>
+              <input type="text" name="title" id="name" placeholder=" {{obj.item_title}}"  style="direction: rtl; text-align: right; " oninvalid="setCustomValidity('من فضلك ادخل اسم العنصر ')"
+    onchange="try{setCustomValidity('')}catch(e){}"/>
             </div>
         </div>
         <div class="formRow">
@@ -73,7 +124,8 @@
             <label for="price">سعر الوحدة</label>
           </div>
           <div class="field">
-            <input type="text" name="price" id="price" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;" placeholder=" ادخل سعر الوحدة هنا"/>
+            <input type="text" name="price" id="price"  onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;" placeholder=" {{obj.item_price}}" oninvalid="setCustomValidity('من فضلك ادخل سعر الوحدة ')"
+    onchange="try{setCustomValidity('')}catch(e){}" />
           </div>
         </div>
         <div class="formRow">
@@ -81,7 +133,8 @@
             <label for="amount">الكمية</label>
           </div>
           <div class="field">
-            <input type="text" name="amount" id="amount" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;"onblur='Calculate();' placeholder=" ادخل الكمية هنا"/>
+            <input type="text" name="amount" id="amount" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;"onblur='Calculate();' placeholder="{{obj.item_amount}}" oninvalid="setCustomValidity('من فضلك ادخل الكمية')"
+    onchange="try{setCustomValidity('')}catch(e){}"/>
           </div>
         </div>
         <div class="formRow">
@@ -89,8 +142,9 @@
             <label for="total">اجمالى الحساب </label>
           </div>
           <div class="field">
-            <input type="text" name="total"  id="total" placeholder="هنا يكون السعر الكلى" style="width:150px;direction: rtl; text-align: right; background-color : #d1d1d1;" onKeyPress="return numbersonly(this, event)" disabled/>
-            <a style=" margin-right: 20px;color:red;" onclick="test()" href="#">ادخال اجمالى الحساب</a>
+            <input type="text" name="total"  id="total" placeholder="{{obj.item_total}}" style="width:150px;direction: rtl; text-align: right; background-color : #d1d1d1;" oninvalid="setCustomValidity('من فضلك ادخل اجمالى الحساب')"
+    onchange="try{setCustomValidity('')}catch(e){}" onKeyPress="return numbersonly(this, event)" disabled/>
+            <a style=" margin-right: 20px;color:red;"   onclick="test()" href="#">ادخال اجمالى الحساب</a>
           </div>
         </div>
          <div class="formRow">
@@ -104,8 +158,100 @@
               {% for project in projects %}
               <option value="{{project.name}}">{{project.name}}</option>
               {% endfor %}
-            </select>
-
+            </select>      
+          </div>
+        </div>
+        <div class="formRow">
+          <div class="label">
+            <label for="total">التاريخ </label>
+          </div>
+          <div class="field">
+            <input type="text" id="datepicker" name="datepicker"  style="width:150px;direction: rtl; text-align: right;"  />
+            
+          </div>
+        </div>
+        
+        <div class="formRow">
+          <div class="label">
+            <label for="notes">ملاحظات</label>
+          </div>
+          <div class="field">
+            <textarea name="notes" id="notes" style="width:370px;height:80px;direction: rtl; text-align: right;" placeholder=" ادخل ملاحظاتك هنا" ></textarea>
+          </div>
+        </div>
+    </div> <!-- Closing fieldContainer -->
+  </center>
+  <br>
+  <br>
+  <br>
+  <center>
+    <input type="submit" name="submit" style="width:150px;height:50px" value=" اضافة جديد" />
+  </center>
+</form>
+    {% else %}
+    <!-- add -->
+    <form action="/additem/" method="post" id="signupForm">
+    {% csrf_token %}
+      <center>
+        <!-- <caption><h1>{{today_date}}</h1></caption> -->
+        <div class="fieldContainer">
+          <div class="formRow">
+            <div class="label">
+              <label for="name">الاسم</label>
+            </div>
+            <div class="field">
+              <input type="text" name="title" id="name" required="true" placeholder=" ادخل اسم العنصر هنا"  style="direction: rtl; text-align: right; " oninvalid="setCustomValidity('من فضلك ادخل اسم العنصر ')"
+    onchange="try{setCustomValidity('')}catch(e){}"/>
+            </div>
+        </div>
+        <div class="formRow">
+          <div class="label">
+            <label for="price">سعر الوحدة</label>
+          </div>
+          <div class="field">
+            <input type="text" name="price" id="price" required="true" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;" placeholder=" ادخل سعر الوحدة هنا" oninvalid="setCustomValidity('من فضلك ادخل سعر الوحدة ')"
+    onchange="try{setCustomValidity('')}catch(e){}" />
+          </div>
+        </div>
+        <div class="formRow">
+          <div class="label">
+            <label for="amount">الكمية</label>
+          </div>
+          <div class="field">
+            <input type="text" name="amount" id="amount" required="true" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;"onblur='Calculate();' placeholder=" ادخل الكمية هنا" oninvalid="setCustomValidity('من فضلك ادخل الكمية')"
+    onchange="try{setCustomValidity('')}catch(e){}"/>
+          </div>
+        </div>
+        <div class="formRow">
+          <div class="label">
+            <label for="total">اجمالى الحساب </label>
+          </div>
+          <div class="field">
+            <input type="text" name="total"  id="total" placeholder="هنا يكون السعر الكلى" style="width:150px;direction: rtl; text-align: right; background-color : #d1d1d1;" oninvalid="setCustomValidity('من فضلك ادخل اجمالى الحساب')"
+    onchange="try{setCustomValidity('')}catch(e){}" onKeyPress="return numbersonly(this, event)" required="true" disabled/>
+            <a style=" margin-right: 20px;color:red;"   onclick="test()" href="#">ادخال اجمالى الحساب</a>
+          </div>
+        </div>
+         <div class="formRow">
+          <div class="label">
+            <label for="project">المشروع </label>
+          </div>
+          <div class="field">
+           <a style=" margin-right: 20px;color:red;" href="/addpro/">اضافة مشروع جديد</a>
+           <select name="projects" id="projects" style="direction: rtl; text-align: right;">
+              <option value="defult" selected="">{{project}}</option>
+              {% for project in projects %}
+              <option value="{{project.name}}">{{project.name}}</option>
+              {% endfor %}
+            </select>      
+          </div>
+        </div>
+         <div class="formRow">
+          <div class="label">
+            <label for="total">التاريخ </label>
+          </div>
+          <div class="field">
+            <input type="text" id="datepicker" name="datepicker"  style="width:150px;direction: rtl; text-align: right;"  required="true" />
             
           </div>
         </div>
@@ -126,9 +272,9 @@
     <input type="submit" name="submit" style="width:150px;height:50px" value=" اضافة جديد" />
   </center>
 </form>
+{% endif %}
 </div>
 </div>
 </div>
-
 </body>
 </html>

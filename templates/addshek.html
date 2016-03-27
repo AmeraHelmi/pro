@@ -1,13 +1,20 @@
 <!DOCTYPE>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {% load static %}
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
-    <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
-    <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
-    <link href="{% static 'css/test.css' %}" rel="stylesheet" type="text/css" media="all" />
-    <script type="text/javascript" src="{% static 'js/addshek.js' %}"></script>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
+  <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
+  <link href="{% static 'css/test.css' %}" rel="stylesheet" type="text/css" media="all" />
+  <script type="text/javascript" src="{% static 'js/addshek.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+  <script src="{% static 'js/jquery.js' %}"></script>
+  <script src="{% static 'js/jquery-ui.js' %}"></script>
+  <script type="text/javascript">
+   $(function() {
+    $( "#datepicker" ).datepicker();
+  });
+  </script>
 </head>
 <body>
 <div id="wrapper">
@@ -15,40 +22,54 @@
 		<div id="menu" class="container" style="background:#121079;">
 			<ul>
       {% if role == "Admin" %}
-      <li>
-            <a href="/projects/" accesskey="4" title="">المشاريع</a>
-          </li>
-				<li >
+        <li >
           <a href="/accounts/" accesskey="1" title="">الحسابات</a>
         </li>
-				<li>
-          <a href="/shekat/" accesskey="4" title="">الرصيد</a>
-        </li>
-				<li>
-          <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
-        </li>
-				<li>
-          <a href="/today/" accesskey="3" title="">اليومية</a>
-        </li>
+        <li>
+          <a href="/projects/" accesskey="4" title="">المشاريع</a>
+        </li>			
 				<li class="current_page_item">
-          <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
-        </li>
-				{% else %}
-        <li>
-            <a href="/projects/" accesskey="4" title="">المشاريع</a>
-          </li>
-        <li>
           <a href="/shekat/" accesskey="4" title="">الرصيد</a>
         </li>
-        <li>
+				<li>
           <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
         </li>
-        <li>
+				<li>
           <a href="/today/" accesskey="3" title="">اليومية</a>
         </li>
-        <li class="current_page_item">
+				<li>
           <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
         </li>
+				  {% elif role == "Accountant" %}
+                    <li>
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                    <li>
+                        <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+                    </li>
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
+                    {% else %}
+                     <li>
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                 
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
         {% endif %}
 			</ul>
 		</div>
@@ -59,12 +80,22 @@
       {% csrf_token %}
         <center>
           <div class="fieldContainer">
+           <div class="formRow">
+              <div class="label">
+                <label for="serial">رقم الدفعة</label>
+              </div>
+              <div class="field">
+                <input type="text" name="serial" id="serial" required="true" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;" placeholder=" ادخل رقم الدفعة هنا" oninvalid="setCustomValidity('من فضلك ادخل رقم الدفعة ')"
+    onchange="try{setCustomValidity('')}catch(e){}" />
+              </div>
+            </div>
             <div class="formRow">
               <div class="label">
                 <label for="price">رقم الشيك</label>
               </div>
               <div class="field">
-                <input type="text" name="num" id="num" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;" placeholder=" ادخل رقم الشيك هنا"/>
+                <input type="text" name="num" id="num" required="true" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;" placeholder=" ادخل رقم الشيك هنا" oninvalid="setCustomValidity('من فضلك ادخل رقم الشيك ')"
+    onchange="try{setCustomValidity('')}catch(e){}" />
               </div>
             </div>
             <div class="formRow">
@@ -72,10 +103,19 @@
                 <label for="amount">القيمة</label>
               </div>
               <div class="field">
-                <input type="text" name="amount" id="amount" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;" placeholder=" ادخل قيمة الشيك هنا"/>
+                <input type="text" name="amount" id="amount" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;" placeholder=" ادخل قيمة الشيك هنا" required="true"  oninvalid="setCustomValidity('من فضلك ادخل القيمة  ')"
+    onchange="try{setCustomValidity('')}catch(e){}" />
               </div>
             </div>
-           
+            <div class="formRow">
+          <div class="label">
+            <label for="total">التاريخ </label>
+          </div>
+          <div class="field">
+            <input type="text" id="datepicker" name="datepicker"  style="width:150px;direction: rtl; text-align: right;"  required="true" />
+            
+          </div>
+        </div>
           </center>
           <br>
           <br>
@@ -87,6 +127,5 @@
       </div>
     </div>
   </div>
-
 </body>
 </html>

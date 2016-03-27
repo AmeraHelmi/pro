@@ -3,11 +3,33 @@
 {% load static %}
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
   <link href="{% static 'css/default.css' %} " rel="stylesheet" type="text/css" media="all" />
   <link href="{% static 'css/fonts.css' %}" rel="stylesheet" type="text/css" media="all" />
   <link href="{% static 'css/test.css' %}" rel="stylesheet" type="text/css" media="all" />
-  <script type="text/javascript" src="{% static 'js/addaction.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/additem.js' %}"></script>
+  <script type="text/javascript">
+    function numbersonly(myfield, e, dec)
+    {
+      var key;
+      var keychar;
+      if (window.event)
+        key = window.event.keyCode;
+      else if (e)
+        key = e.which;
+      else return true;
+      keychar = String.fromCharCode(key);
+      if ((key==null) || (key==0) || (key==8) || (key==9) || (key==13) || (key==27) )return true;
+      else if ((("0123456789").indexOf(keychar) > -1))
+        return true;
+      else if (dec && (keychar == "."))
+      {
+        myfield.form.elements[dec].focus();
+        return false;
+      }
+      else return false;
+      }
+    }
+  </script>
 </head>
 <body>
   <div id="wrapper">
@@ -15,40 +37,54 @@
 	   	<div id="menu" class="container" style="background:#121079;">
 	       <ul>
           {% if role == "Admin" %}
-          <li>
-            <a href="/projects/" accesskey="4" title="">المشاريع</a>
-          </li>
             <li >
               <a  href="/accounts/" accesskey="1" title="">الحسابات</a>
             </li>
             <li>
-              <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+              <a href="/projects/" accesskey="4" title="">المشاريع</a>
             </li>
             <li>
-              <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+              <a href="/shekat/" accesskey="4" title="">الرصيد</a>
             </li>
             <li class="current_page_item">
+              <a href="/m2alen/" accesskey="2" title="">المقاولين </a>
+            </li>
+            <li >
               <a href="/today/" accesskey="3" title="">اليومية</a>
             </li>
             <li >
               <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
             </li>
-          {% else %}
-          <li>
-            <a href="/projects/" accesskey="4" title="">المشاريع</a>
-          </li>
-            <li>
-              <a href="/shekat/" accesskey="4" title="">الرصيد</a>
-            </li>
-            <li>
-              <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
-            </li>
-            <li>
-              <a href="/today/" accesskey="3" title="">اليومية</a>
-            </li>
-            <li class="current_page_item">
-              <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
-            </li>
+              {% elif role == "Accountant" %}
+                    <li>
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                    <li>
+                        <a href="/shekat/" accesskey="4" title="">الرصيد</a>
+                    </li>
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
+                    {% else %}
+                     <li>
+                        <a href="/projects/" accesskey="4" title="">المشاريع</a>
+                    </li>
+                 
+                    <li>
+                        <a href="/m2alen/" accesskey="2" title="">مقاولين الباطن</a>
+                    </li>
+                    <li>
+                        <a href="/today/" accesskey="3" title="">اليومية</a>
+                    </li>
+                    <li class="current_page_item">
+                        <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
+                    </li>
           {% endif %}
       </ul>
 		</div>
@@ -67,7 +103,7 @@
                         <label for="name">المدفوع</label>
                       </div>
                       <div class="field">
-                        <input type="text" name="paid" id="paid" required placeholder=" ادخل المبلغ المدفوع هنا"style="direction: rtl; text-align: right;"/>
+                        <input type="text" name="paid" id="paid" required placeholder=" ادخل المبلغ المدفوع هنا" onKeyPress="return numbersonly(this, event)" style="direction: rtl; text-align: right;"/>
                     </div>
                   </div>
                 </div>
@@ -82,6 +118,5 @@
           </div>
         </div>
       </div>
-     
     </body>
 </html>
