@@ -18,8 +18,8 @@
         key = e.which;
       else return true;
       keychar = String.fromCharCode(key);
-      if ((key==null) || (key==0) || (key==8) || (key==9) || (key==13) || (key==27) )return true;
-      else if ((("0123456789").indexOf(keychar) > -1))
+      if ((key==null) || (key==0) || (key==8) || (key==9) || (key==13) || (key==27)  )return true;
+      else if (((".0123456789").indexOf(keychar) > -1))
         return true;
       else if (dec && (keychar == "."))
       {
@@ -28,7 +28,8 @@
       }
       else return false;
       }
-    }
+    
+   
   </script>
 </head>
 <body>
@@ -43,10 +44,10 @@
             <li>
               <a href="/projects/" accesskey="4" title="">المشاريع</a>
             </li>
-            <li>
+            <li class="current_page_item">
               <a href="/shekat/" accesskey="4" title="">الرصيد</a>
             </li>
-            <li class="current_page_item">
+            <li >
               <a href="/m2alen/" accesskey="2" title="">المقاولين </a>
             </li>
             <li >
@@ -59,7 +60,7 @@
                     <li>
                         <a href="/projects/" accesskey="4" title="">المشاريع</a>
                     </li>
-                    <li>
+                    <li class="current_page_item">
                         <a href="/shekat/" accesskey="4" title="">الرصيد</a>
                     </li>
                     <li>
@@ -68,7 +69,7 @@
                     <li>
                         <a href="/today/" accesskey="3" title="">اليومية</a>
                     </li>
-                    <li class="current_page_item">
+                    <li >
                         <a href="/start/" accesskey="1" title="">الصفحة الرئيسية </a>
                     </li>
                     {% else %}

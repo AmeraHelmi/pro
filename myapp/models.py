@@ -55,8 +55,8 @@ class Item(models.Model):
 class M2awel(models.Model):
     name=models.CharField(max_length=1500)
     job=models.CharField(max_length=1500)
-    money=models.IntegerField()
-    paid=models.IntegerField()
+    money=models.CharField(max_length=1500)
+    paid=models.CharField(max_length=1500)
     project=models.ForeignKey(Project)
     # no_card=models.IntegerField()
     def __unicode__(self):
@@ -64,7 +64,7 @@ class M2awel(models.Model):
 
 # transactions of payment to m2awel
 class Transaction(models.Model):
-    action_paid=models.IntegerField()
+    action_paid=models.CharField(max_length=1500)
     action_date=models.DateField(auto_now=False)
     m2awel=models.ForeignKey(M2awel)
     def __unicode__(self):
@@ -72,10 +72,10 @@ class Transaction(models.Model):
 
 # shekat data
 class Shek(models.Model):
-    serial=models.IntegerField()
-    num=models.IntegerField()
+    serial=models.CharField(max_length=1500)
+    num=models.CharField(max_length=1500)
     date=models.DateField(auto_now=False)
-    amount=models.IntegerField()
+    amount=models.CharField(max_length=1500)
     project=models.ForeignKey(Project)
     def __unicode__(self):
         return self.num.__str__()

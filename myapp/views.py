@@ -64,8 +64,8 @@ def search(request):
             year=int(year)
             testdate=datetime.datetime(year,month,day)
             ss_items=Item.objects.all().values_list('item_title',flat=True)
-            items=Item.objects.filter(item_date=testdate)
-            today_items=Item.objects.filter(item_date=today_date)
+            items=Item.objects.filter(item_date=testdate).order_by('item_date')
+            today_items=Item.objects.filter(item_date=today_date).order_by('item_date')
             email=request.session.get("email")
             user_obj=User.objects.get(user_email=email)
             request.session['username']=user_obj.user_name
@@ -79,7 +79,7 @@ def search(request):
             # items=Item.objects.filter(item_date=today_date,project=pro_obj)
                 all_price=0
                 for item in items:
-                    ss=int(item.item_total.encode('utf-8'))
+                    ss=float(item.item_total.encode('utf-8'))
                     all_price=all_price+ss
                 return render(request,'today.html',{'today_date':today_date,'username':username,'role':role,'items':items,'test_date':testdate,'all_items':ss_items,'all_price':all_price,'project':project})
             else:
@@ -88,8 +88,8 @@ def search(request):
             
             today_date=date.today()
             ss_items=Item.objects.all().values_list('item_title',flat=True)
-            items=Item.objects.filter(item_date=today_date)
-            today_items=Item.objects.filter(item_date=today_date)
+            items=Item.objects.filter(item_date=today_date).order_by('item_date')
+            today_items=Item.objects.filter(item_date=today_date).order_by('item_date')
             email=request.session.get("email")
             user_obj=User.objects.get(user_email=email)
             request.session['username']=user_obj.user_name
@@ -99,10 +99,10 @@ def search(request):
             if request.session.get("project"):
                 project=request.session.get("project")
                 pro_obj=Project.objects.get(name=project)            
-                items=Item.objects.filter(item_date=today_date,project=pro_obj)
+                items=Item.objects.filter(item_date=today_date,project=pro_obj).order_by('item_date')
                 all_price=0
                 for item in today_items:
-                    ss=int(item.item_total.encode('utf-8'))
+                    ss=float(item.item_total.encode('utf-8'))
                     all_price=all_price+ss
                 return render(request,'today.html',{'project':project,'username':username,'role':role,'items':items,'today_date':today_date,'all_items':ss_items,'all_price':all_price})
             else:
@@ -124,17 +124,17 @@ def projects(request):
 # index method for "elyomia page"
 def today(request):
     today_date=date.today()
-    aa_items=Item.objects.all()
-    ss_items=Item.objects.all().values_list('item_title',flat=True)
-    items=Item.objects.filter(item_date=today_date)
+    aa_items=Item.objects.all().order_by('item_date')
+    ss_items=Item.objects.all().values_list('item_title',flat=True).order_by('item_date')
+    items=Item.objects.filter(item_date=today_date).order_by('item_date')
     if request.session.get("email"):
         if request.session.get("project"):
             project=request.session.get("project")
             pro_obj=Project.objects.get(name=project)
-            items=Item.objects.filter(item_date=today_date,project=pro_obj)
+            items=Item.objects.filter(item_date=today_date,project=pro_obj).order_by('item_date')
             all_price=0
             for item in items:
-                ss=int(item.item_total.encode('utf-8'))
+                ss=float(item.item_total.encode('utf-8'))
                 all_price=all_price+ss
             email=request.session.get("email")
             user_obj=User.objects.get(user_email=email)
@@ -205,20 +205,24 @@ def getproinfo(request):
         project = request.POST.get('projects', None)  
         if project != 'defult':
             pro_obj=Project.objects.get(name=project)
-            items=Item.objects.filter(project=pro_obj)
+            items=Item.objects.filter(project=pro_obj).order_by('item_date')
             m2awelen=M2awel.objects.filter(project=pro_obj)
             shekat=Shek.objects.filter(project=pro_obj)
+            if request.session.get("project"):
+                pass 
+            else:
+                request.session['project']=project
             items_price=0
             ma2wlen_price=0
             shekat_price=0
             for item in items:
-                ss=int(item.item_total.encode('utf-8'))
+                ss=float(item.item_total.encode('utf-8'))
                 items_price=items_price+ss
             for m2awel in m2awelen:
-                mm=int(m2awel.paid)
+                mm=float(m2awel.paid)
                 ma2wlen_price=ma2wlen_price+mm
             for shek in shekat:
-                hh=int(shek.amount)
+                hh=float(shek.amount)
                 shekat_price=shekat_price+hh
             return render(request,'proinfo.html',{'project':project,'username':username,'role':role,'items':items,'m2awelen':m2awelen,'shekat':shekat,'items_price':items_price,'ma2wlen_price':ma2wlen_price,'shekat_price':shekat_price})
         else:
@@ -226,14 +230,14 @@ def getproinfo(request):
             project=request.session.get("project")
             projects=Project.objects.all()
             pro_obj=Project.objects.get(name=project)
-            dd_items=Item.objects.filter(item_date=today_date,project=pro_obj)
+            dd_items=Item.objects.filter(item_date=today_date,project=pro_obj).order_by('item_date')
             all_price=0
             for item in dd_items:
-                ss=int(item.item_total.encode('utf-8'))
+                ss=float(item.item_total.encode('utf-8'))
                 all_price=all_price+ss
             dd_actions=Transaction.objects.filter(action_date=today_date)
             for action in dd_actions:
-                dd=int(action.action_paid)
+                dd=float(action.action_paid)
                 all_price=all_price+dd
             return render(request,'accounts.html',{'all_projects':projects,'project':project,'all_price':all_price,'username':username,'role':role})           
 #######################################################################
@@ -295,11 +299,11 @@ def accountsbydate(request):
                 dd_items=Item.objects.filter(item_date=today_date,project=pro_obj)
                 all_price=0
                 for item in dd_items:
-                    ss=int(item.item_total.encode('utf-8'))
+                    ss=float(item.item_total.encode('utf-8'))
                     all_price=all_price+ss
                 dd_actions=Transaction.objects.filter(action_date=today_date)
                 for action in dd_actions:
-                    dd=int(action.action_paid)
+                    dd=float(action.action_paid)
                     all_price=all_price+dd
                 return render(request,'accounts.html',{'project':project,'all_price':all_price,'username':username,'role':role,'items':items,'actions':actions})
             else:
@@ -321,11 +325,11 @@ def report(request):
     items=Item.objects.filter(item_date=today_date)
     all_price=0
     for item in items:
-        ss=int(item.item_total.encode('utf-8'))
+        ss=float(item.item_total.encode('utf-8'))
         all_price=all_price+ss
     ss_actions=Transaction.objects.filter(action_date=today_date)
     for action in ss_actions:
-        dd=int(action.action_paid)
+        dd=float(action.action_paid)
         all_price=all_price+dd
     # results['today_date']=today_date
     # results['all_price']=all_price
@@ -445,17 +449,20 @@ def accounts(request):
             project=request.session.get("project")
             pro_obj=Project.objects.get(name=project)
        
-            dd_items=Item.objects.filter(item_date=today_date,project=pro_obj)
+            dd_items=Item.objects.filter(item_date=today_date,project=pro_obj).order_by('item_date')
             all_price=0
             for item in dd_items:
-                ss=int(item.item_total.encode('utf-8'))
+                ss=float(item.item_total.encode('utf-8'))
                 all_price=all_price+ss
             dd_actions=Transaction.objects.filter(action_date=today_date)
             for action in dd_actions:
-                dd=int(action.action_paid)
+                dd=float(action.action_paid)
                 all_price=all_price+dd
             all_projects=Project.objects.all()
             return render(request,'accounts.html',{'project':project,'all_price':all_price,'username':username,'role':role,'all_projects':all_projects})
+        elif Project.objects.all():
+            all_projects=Project.objects.all()
+            return render(request,'accounts.html',{'username':username,'role':role,'all_projects':all_projects})
         else:
             return render(request,'accounts.html',{'username':username,'role':role})
     else:
@@ -548,7 +555,7 @@ def additem(request):
         if request.POST.get("total"):
             i_total=request.POST.get("total")
         else:
-            i_total=str(int(i_amount) * int(i_price))
+            i_total=str(float(i_amount) * float(i_price))
         if request.POST.get("notes"):
             i_notes=request.POST.get("notes")
         else:
@@ -589,9 +596,9 @@ def additem(request):
                 obj.save()
                 request.session['project']=project
         today_date=date.today()
-        ss_items=Item.objects.all().values_list('item_title',flat=True)
+        ss_items=Item.objects.all().values_list('item_title',flat=True).order_by('item_date')
         pro_obj=Project.objects.get(name=project)
-        items=Item.objects.filter(item_date=i_date,project=pro_obj)
+        items=Item.objects.filter(item_date=i_date,project=pro_obj).order_by('item_date')
         email=request.session.get("email")
         user_obj=User.objects.get(user_email=email)
         request.session['username']=user_obj.user_name
@@ -601,10 +608,10 @@ def additem(request):
         if request.session.get("project"):
             project=request.session.get("project")
             pro_obj=Project.objects.get(name=project)
-            items=Item.objects.filter(item_date=i_date,project=pro_obj)
+            items=Item.objects.filter(item_date=i_date,project=pro_obj).order_by('item_date')
             all_price=0
             for item in items:
-                ss=int(item.item_total.encode('utf-8'))
+                ss=float(item.item_total.encode('utf-8'))
                 all_price=all_price+ss
             return render(request,'today.html',{'project':project,'username':username,'role':role,'items':items,'today_date':today_date,'all_items':ss_items,'all_price':all_price})
     else:
@@ -666,11 +673,11 @@ def addproj(request):
             role=request.session.get("role")
             project=request.session.get("project")
             pro_obj=Project.objects.get(name=project)
-            items=Item.objects.filter(item_date=today_date,project=pro_obj)
+            items=Item.objects.filter(item_date=today_date,project=pro_obj).order_by('item_date')
             # items=Item.objects.filter(item_date=today_date)
             all_price=0
             for item in items:
-                ss=int(item.item_total.encode('utf-8'))
+                ss=float(item.item_total.encode('utf-8'))
                 all_price=all_price+ss
             projects=Project.objects.all()
             return render(request,'projects.html',{'projects':projects,'username':username,'role':role})                   
@@ -687,10 +694,10 @@ def addproj(request):
             role=request.session.get("role")
             project=request.session.get("project")
             pro_obj=Project.objects.get(name=project)
-            items=Item.objects.filter(item_date=today_date,project=pro_obj)
+            items=Item.objects.filter(item_date=today_date,project=pro_obj).order_by('item_date')
             all_price=0
             for item in items:
-                ss=int(item.item_total.encode('utf-8'))
+                ss=float(item.item_total.encode('utf-8'))
                 all_price=all_price+ss
             projects=Project.objects.all()
             return render(request,'projects.html',{'projects':projects,'username':username,'role':role})       
@@ -751,10 +758,10 @@ def usepro(request,pid):
     pro_obj=Project.objects.get(id=pid)
     request.session['project']=pro_obj.name
     project=request.session.get("project")
-    items=Item.objects.filter(project=pro_obj)
+    items=Item.objects.filter(project=pro_obj).order_by('item_date')
     all_price=0
     for item in items:
-        ss=int(item.item_total.encode('utf-8'))
+        ss=float(item.item_total.encode('utf-8'))
         all_price=all_price+ss
     email=request.session.get("email")
     user_obj=User.objects.get(user_email=email)
@@ -861,12 +868,12 @@ def addm2awel(request):
 #############################################################################
 # to delete existing item 
 def delitem(request,uid):
-    Item.objects.filter(id=uid).delete()
+    Item.objects.filter(id=uid).delete().order_by('item_date')
     today_date=date.today()
     project=request.session.get("project")
     pro_obj=Project.objects.get(name=project)
     ss_items=Item.objects.all().values_list('item_title',flat=True)
-    items=Item.objects.filter(item_date=today_date)
+    items=Item.objects.filter(item_date=today_date).order_by('item_date')
     email=request.session.get("email")
     user_obj=User.objects.get(user_email=email)
     request.session['username']=user_obj.user_name
@@ -874,7 +881,7 @@ def delitem(request,uid):
     request.session['role']=user_obj.user_role
     all_price=0
     for item in items:
-        ss=int(item.item_total.encode('utf-8'))
+        ss=float(item.item_total.encode('utf-8'))
         all_price=all_price+ss
     role=request.session.get("role")
     return render(request,'today.html',{'project':project,'username':username,'items':items,'today_date':today_date,'all_items':ss_items,'all_price':all_price,'role':role})
@@ -945,7 +952,7 @@ def edititem(request,uid):
         # if request.session.get("project"):
         project=request.session.get("project")
         pro_obj=Project.objects.get(name=project)
-        items=Item.objects.filter(project=pro_obj)
+        items=Item.objects.filter(project=pro_obj).order_by('item_date')
         email=request.session.get("email")
         user_obj=User.objects.get(user_email=email)
         request.session['username']=user_obj.user_name
@@ -955,7 +962,7 @@ def edititem(request,uid):
         items=Item.objects.filter(item_date=today_date,project=pro_obj)
         all_price=0
         for item in items:
-            ss=int(item.item_total.encode('utf-8'))
+            ss=float(item.item_total.encode('utf-8'))
             all_price=all_price+ss
         role=request.session.get("role")
         return render(request,'today.html',{'project':project,'username':username,'role':role,'items':items,'today_date':today_date,'all_price':all_price})
@@ -1103,7 +1110,7 @@ def addaction(request,uid):
         m2awel_obj=M2awel.objects.get(id=uid)
         i_paid=request.POST.get("paid")
         today_date=date.today()
-        i_paid=int(i_paid)
+        i_paid=float(i_paid)
         obj=Transaction(action_paid=i_paid,action_date=today_date,m2awel=m2awel_obj)
         obj.save()
         # request.session["action_date"]=today_date
@@ -1191,15 +1198,15 @@ def itemsearch(request):
         item=request.POST.get("items",None)
         if item == 'defult':
             today_date=date.today()
-            aa_items=Item.objects.all()
-            ss_items=Item.objects.all().values_list('item_title',flat=True)
-            items=Item.objects.all()
+            aa_items=Item.objects.all().order_by('item_date')
+            ss_items=Item.objects.all().values_list('item_title',flat=True).order_by('item_date')
+            items=Item.objects.all().order_by('item_date')
             if request.session.get("project"):
                 project=request.session.get("project")
                 pro_obj=Project.objects.get(name=project)
                 all_price=0
                 for item in items:
-                    ss=int(item.item_total.encode('utf-8'))
+                    ss=float(item.item_total.encode('utf-8'))
                     all_price=all_price+ss
                 email=request.session.get("email")
                 user_obj=User.objects.get(user_email=email)
@@ -1217,13 +1224,13 @@ def itemsearch(request):
                 role=request.session.get("role")
                 return render(request,'today.html',{'aa_items':aa_items,'username':username,'role':role,'today_date':today_date})
         else:
-            items=Item.objects.filter(item_title=item)
+            items=Item.objects.filter(item_title=item).order_by('item_date')
             if request.session.get("project"):
                 project=request.session.get("project")
                 pro_obj=Project.objects.get(name=project)
                 all_price=0
                 for item in items:
-                    ss=int(item.item_total.encode('utf-8'))
+                    ss=float(item.item_total.encode('utf-8'))
                     all_price=all_price+ss
                 email=request.session.get("email")
                 user_obj=User.objects.get(user_email=email)
